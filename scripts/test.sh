@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+sh -n "$ROOT/companion/embedded/watchdog.sh"
+bash -n "$ROOT/scripts/install.sh"
+bash -n "$ROOT/scripts/harden.sh"
+bash -n "$ROOT/scripts/status.sh"
+bash -n "$ROOT/scripts/sync-ui.sh"
+node --check "$ROOT/companion/reference-node/public/app.js"
+node --check "$ROOT/companion/reference-node/public/i18n.js"
+node --check "$ROOT/companion/reference-node/public/native-pages.js"
+bash "$ROOT/test/install-script.test.sh"
+bash "$ROOT/test/harden-script.test.sh"
+
+diff -q "$ROOT/companion/reference-node/public/index.html" "$ROOT/companion/embedded/public/index.html"
+diff -q "$ROOT/companion/reference-node/public/app.js" "$ROOT/companion/embedded/public/app.js"
+diff -q "$ROOT/companion/reference-node/public/stream-builders.js" "$ROOT/companion/embedded/public/stream-builders.js"
+diff -q "$ROOT/companion/reference-node/public/i18n.js" "$ROOT/companion/embedded/public/i18n.js"
+diff -q "$ROOT/companion/reference-node/public/native-pages.js" "$ROOT/companion/embedded/public/native-pages.js"
+diff -q "$ROOT/companion/reference-node/public/styles.css" "$ROOT/companion/embedded/public/styles.css"
+
+test -s "$ROOT/README.md"
+test -s "$ROOT/README.fr.md"
+test -s "$ROOT/README.zh-CN.md"
+test -s "$ROOT/LICENSE"
+test -s "$ROOT/SECURITY.md"
+test -s "$ROOT/CONTRIBUTING.md"
+grep -Fq '[Français](README.fr.md)' "$ROOT/README.md"
+grep -Fq '[English](README.md)' "$ROOT/README.fr.md"
+grep -Fq '[中文](README.zh-CN.md)' "$ROOT/README.md"
+grep -Fq '[中文](README.zh-CN.md)' "$ROOT/README.fr.md"
+grep -Fq '[English](README.md)' "$ROOT/README.zh-CN.md"
+grep -Fq '[Français](README.fr.md)' "$ROOT/README.zh-CN.md"
+grep -Fq './scripts/install.sh <LINKPI_IP>' "$ROOT/README.md"
+grep -Fq './scripts/install.sh <IP_LINKPI>' "$ROOT/README.fr.md"
+grep -Fq './scripts/install.sh <LINKPI_IP>' "$ROOT/README.zh-CN.md"
+grep -Fq 'LinkPi Companion' "$ROOT/README.md"
+grep -Fq 'LinkPi Companion' "$ROOT/README.fr.md"
+grep -Fq 'Guide' "$ROOT/README.fr.md"
+
+(
+  cd "$ROOT/companion/reference-node"
+  npm test
+)
+
+echo "Local validation passed."

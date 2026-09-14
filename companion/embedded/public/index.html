@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>LinkPi Companion</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar companion-header">
+      <div class="brand-block">
+        <p class="eyebrow">LINKPI ENC1 V3</p>
+        <h1>LinkPi Companion</h1>
+        <p class="brand-copy">Configurer, vérifier, enregistrer et streamer sans se perdre dans les menus.</p>
+      </div>
+      <div class="top-actions">
+        <label class="language-control" for="languageSelect"><span>Langue</span><select id="languageSelect" aria-label="Langue"><option value="fr">Français</option><option value="en">English</option><option value="zh-CN">中文</option></select></label>
+        <span id="globalReadyBadge" class="status-pill status-warn">INCOMPLET</span>
+        <span id="rpcBadge" class="status-pill status-bad">RPC hors ligne</span>
+      </div>
+    </header>
+
+    <nav class="companion-nav" aria-label="Navigation LinkPi Companion">
+      <button class="nav-btn active" data-nav-target="guide">Guide</button>
+      <button class="nav-btn" data-nav-target="director">Auto Director</button>
+      <button class="nav-btn" data-nav-target="status">État</button>
+      <a id="nativeUi" class="nav-btn nav-link" data-native-page="dashboard" href="#" target="_blank" rel="noreferrer">UI LinkPi ↗</a>
+    </nav>
+
+    <main>
+      <section data-view="guide" class="view-panel view-active">
+        <section class="guide-hero card">
+          <div>
+            <p class="label">GUIDE PAS À PAS</p>
+            <h2 class="guide-title">Configurer mon LinkPi</h2>
+            <p class="muted">Tu viens de brancher les caméras ? Suis les étapes dans l’ordre. Le Companion vérifie ce qu’il peut automatiquement et te dit exactement quoi faire dans l’interface LinkPi quand une action manuelle est nécessaire.</p>
+          </div>
+          <div class="hero-actions">
+            <button class="primary-btn" data-guide-jump="cameras">Commencer</button>
+            <button class="secondary-btn" data-go-view="director">Auto Director</button>
+          </div>
+        </section>
+
+        <section class="quick-status-grid" aria-label="État rapide">
+          <article class="quick-status"><span class="status-dot" id="guideRpcDot"></span><div><b>LinkPi</b><small id="guideRpcText">Connexion…</small></div></article>
+          <article class="quick-status"><span class="status-dot" id="guideCameraDot"></span><div><b>Caméras</b><small id="guideCameraText">Vérification…</small></div></article>
+          <article class="quick-status"><span class="status-dot" id="guideDiskDot"></span><div><b>Stockage</b><small id="guideDiskText">Vérification…</small></div></article>
+          <article class="quick-status"><span class="status-dot" id="guideAutoDot"></span><div><b>Auto Director</b><small id="guideAutoText">Vérification…</small></div></article>
+        </section>
+
+        <div class="wizard-layout">
+          <aside class="wizard-rail card" aria-label="Progression du guide">
+            <p class="label">PARCOURS</p>
+            <button class="wizard-step active" data-step-target="cameras"><span>1</span><b>Caméras</b></button>
+            <button class="wizard-step" data-step-target="video-audio"><span>2</span><b>Vidéo + audio</b></button>
+            <button class="wizard-step" data-step-target="autodirector"><span>3</span><b>Auto Director</b></button>
+            <button class="wizard-step" data-step-target="recording"><span>4</span><b>Enregistrement</b></button>
+            <button class="wizard-step" data-step-target="streaming"><span>5</span><b>Streaming</b></button>
+            <button class="wizard-step" data-step-target="preflight"><span>6</span><b>Prêt à diffuser</b></button>
+            <button id="resetGuide" class="text-btn">Réinitialiser le guide</button>
+          </aside>
+
+          <div class="wizard-content">
+            <article id="guide-cameras" class="wizard-card card" data-guide-step="cameras">
+              <div class="step-head"><span class="step-number">1</span><div><p class="label">SOURCES</p><h2>J’ai branché mes caméras</h2></div><span id="stepCameraStatus" class="mini-badge">À vérifier</span></div>
+              <p class="lead">Objectif : voir les deux sources dans le LinkPi avant de toucher aux réglages avancés.</p>
+              <div class="source-grid">
+                <div class="source-card"><span class="status-dot" id="hdmiDot"></span><div><b>Caméra A · HDMI</b><small id="hdmiState">En attente du signal</small></div></div>
+                <div class="source-card"><span class="status-dot" id="usbDot"></span><div><b>Caméra B · USB/UVC</b><small id="usbState">En attente du signal</small></div></div>
+              </div>
+              <div class="action-row"><a class="secondary-btn link-button" data-native-page="input" href="#" target="_blank" rel="noreferrer">Ouvrir les entrées LinkPi ↗</a><button class="primary-btn" data-complete-step="cameras">C’est bon</button></div>
+              <details class="advanced"><summary>Si une caméra n’apparaît pas</summary><div class="help-block"><p><strong>HDMI :</strong> vérifie alimentation caméra, sortie HDMI active et format vidéo supporté.</p><p><strong>USB :</strong> mets la caméra en mode webcam/UVC, reconnecte-la et attends quelques secondes.</p><p>Ne force pas AUTO tant que les deux sources ne sont pas réellement détectées.</p></div></details>
+            </article>
+
+            <article id="guide-video-audio" class="wizard-card card" data-guide-step="video-audio">
+              <div class="step-head"><span class="step-number">2</span><div><p class="label">QUALITÉ</p><h2>Je règle vidéo + audio</h2></div><span id="stepAvStatus" class="mini-badge">À vérifier</span></div>
+              <p class="lead">Pour commencer simple : H.264, 1080p, fréquence identique aux caméras, audio AAC 48 kHz. Les valeurs finales seront ajustées après le vrai test matériel.</p>
+              <div id="guideChannels" class="channel-grid"><p class="muted">Lecture des canaux…</p></div>
+              <div class="callout"><strong>Important</strong><span>Le son qui détecte “qui parle” pour Auto Director est séparé du son final du programme. Le stream doit conserver A + B en continu.</span></div>
+              <div class="action-row"><a class="secondary-btn link-button" data-native-page="encode" href="#" target="_blank" rel="noreferrer">Régler les canaux dans LinkPi ↗</a><button class="primary-btn" data-complete-step="video-audio">Réglages vérifiés</button></div>
+              <details class="advanced"><summary>Comprendre les réglages avancés</summary><div class="help-block"><p><strong>Bitrate :</strong> plus haut = meilleure qualité mais plus de débit et de charge.</p><p><strong>GOP :</strong> garde une valeur simple tant qu’un diffuseur ne demande pas autre chose.</p><p><strong>CBR :</strong> pratique pour un débit de streaming prévisible.</p></div></details>
+            </article>
+
+            <article id="guide-autodirector" class="wizard-card card" data-guide-step="autodirector">
+              <div class="step-head"><span class="step-number">3</span><div><p class="label">RÉALISATION</p><h2>Je prépare Auto Director</h2></div><span id="stepAutoStatus" class="mini-badge">À calibrer</span></div>
+              <p class="lead">Le Companion vérifie cinq verrous : RPC, deux caméras, deux meters audio, calibration des voix et scènes CAM A / CAM B / SPLIT.</p>
+              <div id="guideDirectorChecks" class="check-list"></div>
+              <div class="callout"><strong>Ordre conseillé</strong><span>1. silence du micro A/B → 2. parole normale A/B → 3. scènes → 4. DRY-RUN → 5. seulement ensuite AUTO.</span></div>
+              <div class="action-row"><button class="secondary-btn" data-go-view="director">Ouvrir Auto Director</button><a class="secondary-btn link-button" data-native-page="carousel" href="#" target="_blank" rel="noreferrer">Scènes Carousel LinkPi ↗</a><a class="secondary-btn link-button" data-native-page="mix" href="#" target="_blank" rel="noreferrer">Mix LinkPi ↗</a><button class="primary-btn" data-complete-step="autodirector">DRY-RUN validé</button></div>
+            </article>
+
+            <article id="guide-recording" class="wizard-card card" data-guide-step="recording">
+              <div class="step-head"><span class="step-number">4</span><div><p class="label">USB / ISO</p><h2>J’enregistre sur un disque externe</h2></div><span id="stepRecordStatus" class="mini-badge">À vérifier</span></div>
+              <p class="lead">Objectif de production : enregistrer CAM A + CAM B + PROGRAM en MP4 sur le disque USB, tout en streamant le programme.</p>
+              <div id="recordingSummary" class="recording-summary"><p class="muted">Lecture du stockage…</p></div>
+              <div class="callout warning"><strong>Avant le vrai tournage</strong><span>On doit benchmarker les trois enregistrements simultanés sur ton ENC1 V3. Le guide ne prétendra pas que c’est validé avant ce test.</span></div>
+              <div class="action-row"><a class="secondary-btn link-button" data-native-page="record" href="#" target="_blank" rel="noreferrer">Ouvrir Record LinkPi ↗</a><a class="secondary-btn link-button" data-native-page="storage" href="#" target="_blank" rel="noreferrer">Ouvrir Storage LinkPi ↗</a><button class="primary-btn" data-complete-step="recording">Disque + MP4 vérifiés</button></div>
+              <details class="advanced"><summary>Format du disque et sécurité d’enregistrement</summary><div class="help-block"><p><strong>NTFS conseillé</strong> pour un gros disque moderne. Évite FAT32 pour de longs tournages : un fichier FAT32 est limité à 4 Go.</p><p><strong>Fragmentation :</strong> découper un long enregistrement en fichiers plus courts limite la casse en cas d’arrêt brutal.</p><p>Formats avancés disponibles : TS, MKV, MOV, FLV. En mode simple, reste sur MP4.</p></div></details>
+            </article>
+
+            <article id="guide-streaming" class="wizard-card card" data-guide-step="streaming">
+              <div class="step-head"><span class="step-number">5</span><div><p class="label">DESTINATION</p><h2>Je choisis où streamer</h2></div><span id="stepStreamStatus" class="mini-badge">À configurer</span></div>
+              <p class="lead">Choisis le protocole. Le Companion génère la valeur à copier dans LinkPi mais ne sauvegarde jamais ta clé de stream.</p>
+              <div class="protocol-tabs" role="tablist">
+                <button class="protocol-tab active" data-protocol-tab="youtube">YouTube</button>
+                <button class="protocol-tab" data-protocol-tab="twitch">Twitch</button>
+                <button class="protocol-tab" data-protocol-tab="rtmp">RTMP</button>
+                <button class="protocol-tab" data-protocol-tab="srt">SRT</button>
+                <button class="protocol-tab" data-protocol-tab="rtp">RTP / UDP</button>
+              </div>
+              <div class="protocol-panel active" data-protocol-panel="youtube">
+                <div class="field-grid"><label><span>URL RTMPS YouTube</span><input id="youtubeServer" type="url" placeholder="rtmps://…/live2"></label><label><span>Clé de stream</span><input id="youtubeKey" type="password" autocomplete="off" placeholder="••••••••"></label></div>
+                <p class="field-help">Dans YouTube Live Control Room : Paramètres de flux → copie l’URL RTMPS puis la clé. Le Companion ne les enregistre pas.</p>
+                <div class="generated-row"><code id="youtubeOutput">Renseigne l’URL et la clé.</code><button data-copy-target="youtubeOutput">Copier</button></div>
+              </div>
+              <div class="protocol-panel" data-protocol-panel="twitch">
+                <div class="field-grid"><label><span>Serveur Twitch / ingest</span><input id="twitchServer" type="url" placeholder="rtmp://…/app"></label><label><span>Stream Key Twitch</span><input id="twitchKey" type="password" autocomplete="off" placeholder="••••••••"></label></div>
+                <p class="field-help">Copie le serveur/ingest et ta Stream Key depuis Twitch. Ne partage jamais cette clé.</p>
+                <div class="generated-row"><code id="twitchOutput">Renseigne le serveur et la clé.</code><button data-copy-target="twitchOutput">Copier</button></div>
+              </div>
+              <div class="protocol-panel" data-protocol-panel="rtmp">
+                <div class="field-grid"><label><span>Serveur RTMP / RTMPS</span><input id="rtmpServer" type="url" placeholder="rtmps://serveur/app"></label><label><span>Clé / nom du flux</span><input id="rtmpKey" type="password" autocomplete="off" placeholder="stream-key"></label></div>
+                <p class="field-help">RTMPS = RTMP chiffré. Si ton fournisseur te donne RTMPS, garde bien <strong>rtmps://</strong>.</p>
+                <div class="generated-row"><code id="rtmpOutput">Renseigne le serveur et la clé.</code><button data-copy-target="rtmpOutput">Copier</button></div>
+              </div>
+              <div class="protocol-panel" data-protocol-panel="srt">
+                <div class="field-grid compact"><label><span>Mode</span><select id="srtMode"><option value="caller">Caller</option><option value="listener">Listener</option><option value="rendezvous">Rendezvous</option></select></label><label><span>Hôte / IP</span><input id="srtHost" placeholder="203.0.113.20"></label><label><span>Port</span><input id="srtPort" type="number" min="1" max="65535" value="7001"></label><label><span>Latence ms</span><input id="srtLatency" type="number" min="0" value="120"></label></div>
+                <details class="advanced"><summary>SRT avancé : chiffrement / streamid</summary><div class="field-grid"><label><span>Passphrase</span><input id="srtPassphrase" type="password" autocomplete="off"></label><label><span>Stream ID</span><input id="srtStreamId"></label></div></details>
+                <div class="generated-row"><code id="srtOutput">Renseigne l’hôte et le port.</code><button data-copy-target="srtOutput">Copier</button></div>
+              </div>
+              <div class="protocol-panel" data-protocol-panel="rtp">
+                <div class="field-grid compact"><label><span>Destination IP</span><input id="udpIp" placeholder="239.1.1.1"></label><label><span>Port</span><input id="udpPort" type="number" min="1" max="65535" value="5000"></label><label><span>TTL</span><input id="udpTtl" type="number" min="1" max="255" value="5"></label><label class="toggle-field"><span>En-tête RTP</span><input id="udpRtp" type="checkbox" checked></label></div>
+                <p class="field-help">Unicast = une IP de destination. Multicast = une adresse 224.0.0.0–239.255.255.255. Dans LinkPi, RTP correspond à UDP avec l’option RTP activée.</p>
+                <div class="generated-row"><code id="udpOutput">Renseigne une IP et un port.</code><button data-copy-target="udpOutput">Copier</button></div>
+              </div>
+              <div id="streamGeneratorError" class="error" hidden></div>
+              <div class="action-row"><a class="secondary-btn link-button" data-native-page="stream" href="#" target="_blank" rel="noreferrer">Ouvrir Stream LinkPi ↗</a><a class="secondary-btn link-button" data-native-page="push" href="#" target="_blank" rel="noreferrer">Ouvrir Push LinkPi ↗</a><button class="primary-btn" data-complete-step="streaming">Destination vérifiée</button></div>
+              <details class="advanced"><summary>Multi-destination et choix du protocole</summary><div class="help-block"><p><strong>RTMPS :</strong> choix simple pour YouTube quand disponible.</p><p><strong>SRT :</strong> robuste sur Internet instable et très pratique point-à-point.</p><p><strong>RTP/UDP :</strong> excellent sur LAN ou infrastructure maîtrisée ; multicast permet plusieurs récepteurs.</p><p>Le LinkPi sait gérer plusieurs destinations : valide-les d’abord une par une.</p></div></details>
+            </article>
+
+            <article id="guide-preflight" class="wizard-card card" data-guide-step="preflight">
+              <div class="step-head"><span class="step-number">6</span><div><p class="label">CHECK FINAL</p><h2>Je suis prêt à diffuser</h2></div><span id="stepPreflightStatus" class="mini-badge">INCOMPLET</span></div>
+              <p class="lead">Choisis ton workflow. Le Companion ne bloque pas sur ce que tu n’utilises pas.</p>
+              <div class="workflow-row"><label><input id="workflowDirector" type="checkbox" checked> Auto Director</label><label><input id="workflowRecording" type="checkbox" checked> Enregistrement</label><label><input id="workflowStreaming" type="checkbox" checked> Streaming</label></div>
+              <div id="preflightList" class="preflight-list"></div>
+              <div id="preflightReady" class="ready-banner">INCOMPLET · suis les actions ci-dessus.</div>
+              <div class="callout"><strong>Lancement manuel v1</strong><span>Une fois READY, démarre l’enregistrement et le push depuis l’UI LinkPi native. Le Companion ne lance rien tout seul.</span></div>
+              <div class="action-row"><button class="secondary-btn" data-go-view="status">Voir l’état détaillé</button><a class="secondary-btn link-button" data-native-page="record" href="#" target="_blank" rel="noreferrer">Record ↗</a><a class="primary-btn link-button" data-native-page="push" href="#" target="_blank" rel="noreferrer">Push / Live ↗</a></div>
+            </article>
+
+            <div class="wizard-nav"><button id="guidePrev" class="secondary-btn">← Précédent</button><span id="guideProgress">Étape 1 / 6</span><button id="guideNext" class="primary-btn">Suivant →</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section data-view="status" class="view-panel">
+        <section class="view-heading card"><div><p class="label">DIAGNOSTIC</p><h2>État du LinkPi</h2><p class="muted">Une vue simple de ce qui fonctionne et de ce qui manque avant un tournage.</p></div><span id="statusOverall" class="status-pill status-warn">INCOMPLET</span></section>
+        <section class="grid grid-health companion-health">
+          <article class="card stat-card"><p class="label">CPU</p><strong id="cpuStat">—</strong><span>%</span></article>
+          <article class="card stat-card"><p class="label">RAM</p><strong id="memStat">—</strong><span>%</span></article>
+          <article class="card stat-card"><p class="label">TEMP.</p><strong id="tempStat">—</strong><span>°C</span></article>
+          <article class="card stat-card wide-stat"><p class="label">CAROUSEL</p><strong id="carouselStat">Arrêté</strong><span id="carouselMode">—</span></article>
+        </section>
+        <section class="grid grid-main status-grid">
+          <article class="card meters-card"><div class="section-head"><div><p class="label">SOURCES</p><h2>Caméras détectées</h2></div><span id="statusCameraCount" class="mini-badge">0</span></div><div id="statusInputs" class="status-stack"></div></article>
+          <article class="card readiness-card"><div class="section-head"><div><p class="label">À FAIRE</p><h2>Qu’est-ce qui bloque ?</h2></div></div><div id="problemList" class="problem-list"></div></article>
+        </section>
+        <section class="card note-card"><div><p class="label">STOCKAGE / STREAM</p><h2 id="statusStorageTitle">Vérification…</h2><p id="statusStorageCopy" class="muted">Lecture de la configuration de production.</p></div><button class="secondary-btn" data-go-view="guide">Retour au guide</button></section>
+      </section>
+
+      <section data-view="director" class="view-panel">
+        <section class="view-heading card"><div><p class="label">RÉALISATION AUTOMATIQUE</p><h2>Auto Director</h2><p class="muted">Réglages avancés de la réalisation audio-driven. Commence par le Guide si le matériel n’est pas encore calibré.</p></div><button class="secondary-btn" data-go-view="guide">Retour au guide</button></section>
+        <section class="hero card director-hero">
+          <div class="mode-copy"><p class="label">MODE</p><div class="mode-row" role="group" aria-label="Mode Auto Director"><button class="mode-btn" data-mode="OFF">OFF</button><button class="mode-btn" data-mode="DRY_RUN">DRY‑RUN</button><button class="mode-btn mode-auto" data-mode="AUTO">AUTO</button></div><p id="modeHint" class="muted">Connexion au boîtier…</p><p id="modeError" class="error" hidden></p></div>
+          <div class="program-block"><p class="label">PROGRAMME</p><div id="sceneName" class="scene-name">SPLIT</div><div id="decisionReason" class="reason">En attente de télémétrie</div><button id="safeSplit" class="danger-btn" disabled>SAFE SPLIT</button></div>
+        </section>
+        <section class="grid grid-main">
+          <article class="card meters-card"><div class="section-head"><div><p class="label">DÉTECTION</p><h2>Micros</h2></div><span id="decisionBadge" class="mini-badge">Aucune décision</span></div><div class="meters"><div class="meter-unit"><div class="meter-copy"><strong>A</strong><span id="scoreA">—</span></div><div class="meter-track"><div id="meterA" class="meter-fill"></div></div></div><div class="meter-unit"><div class="meter-copy"><strong>B</strong><span id="scoreB">—</span></div><div class="meter-track"><div id="meterB" class="meter-fill"></div></div></div></div></article>
+          <article class="card readiness-card"><div class="section-head"><div><p class="label">VERROUS</p><h2>Readiness AUTO</h2></div><span id="readySummary" class="mini-badge">0 / 5</span></div><div id="readinessList" class="check-list"></div></article>
+        </section>
+
+        <section class="card settings-card">
+          <div class="section-head"><div><p class="label">RÉALISATION</p><h2>Comportement Auto Director</h2></div><div class="preset-row"><button class="preset-btn" data-preset="STABLE">Stable</button><button class="preset-btn" data-preset="NATURAL">Naturel</button><button class="preset-btn" data-preset="REACTIVE">Réactif</button></div></div>
+          <details class="quick-guide"><summary>Guide rapide · comment régler sans rendre la réalisation nerveuse</summary><div class="guide-grid"><p><strong>Stable</strong> · interviews posées, plans plus longs, moins de cuts.</p><p><strong>Naturel</strong> · recommandé pour podcast / interview classique.</p><p><strong>Réactif</strong> · échanges rapides, davantage de changements de caméra.</p></div><p class="guide-tip"><strong>Anti ping-pong :</strong> augmente d’abord <em>Durée minimale du plan</em> et <em>Période réfractaire</em>.</p></details>
+          <div id="settingsGrid" class="settings-grid">
+            <label class="setting-field"><span class="setting-title">Délai avant changement</span><span class="setting-control"><input data-setting="acquisitionMs" type="number" step="50"><b>ms</b></span><small data-help-for="acquisitionMs">Temps pendant lequel un nouveau locuteur doit dominer avant le cut. Plus haut = moins de va-et-vient. Recommandé : 900 ms.</small></label>
+            <label class="setting-field"><span class="setting-title">Durée minimale d’un plan</span><span class="setting-control"><input data-setting="minShotMs" type="number" step="100"><b>ms</b></span><small data-help-for="minShotMs">Après un cut, la caméra reste au moins ce temps avant d’autoriser un autre changement. Plus haut = plus stable. Recommandé : 5000 ms.</small></label>
+            <label class="setting-field"><span class="setting-title">Période réfractaire</span><span class="setting-control"><input data-setting="refractoryMs" type="number" step="100"><b>ms</b></span><small data-help-for="refractoryMs">Fenêtre juste après un cut pendant laquelle aucune nouvelle coupe n’est acceptée. Plus haut = plus calme. Recommandé : 2500 ms.</small></label>
+            <label class="setting-field"><span class="setting-title">Chevauchement → Split</span><span class="setting-control"><input data-setting="overlapMs" type="number" step="50"><b>ms</b></span><small data-help-for="overlapMs">Si A et B parlent ensemble au moins ce temps, passage au plan partagé. Plus bas = split plus rapide. Recommandé : 1000 ms.</small></label>
+            <label class="setting-field"><span class="setting-title">Maintien du Split</span><span class="setting-control"><input data-setting="splitHoldMs" type="number" step="100"><b>ms</b></span><small data-help-for="splitHoldMs">Durée minimale du plan partagé après un chevauchement. Évite de recouper immédiatement. Recommandé : 3000 ms.</small></label>
+            <label class="setting-field"><span class="setting-title">Silence → Split</span><span class="setting-control"><input data-setting="silenceMs" type="number" step="250"><b>ms</b></span><small data-help-for="silenceMs">Après ce silence des deux micros, retour au plan neutre partagé. Plus haut = garde le dernier gros plan plus longtemps. Recommandé : 7000 ms.</small></label>
+            <label class="setting-field"><span class="setting-title">Seuil parole A</span><span class="setting-control"><input data-setting="speechThresholdA" type="number" step="0.01"><b>0–1</b></span><small data-help-for="speechThresholdA">Niveau minimal pour considérer A comme parlant. Plus bas = plus sensible au bruit. Recommandé : 0,35 avant calibration fine.</small></label>
+            <label class="setting-field"><span class="setting-title">Seuil parole B</span><span class="setting-control"><input data-setting="speechThresholdB" type="number" step="0.01"><b>0–1</b></span><small data-help-for="speechThresholdB">Niveau minimal pour considérer B comme parlant. Plus bas = plus sensible au bruit. Recommandé : 0,35 avant calibration fine.</small></label>
+            <label class="setting-field"><span class="setting-title">Marge de dominance</span><span class="setting-control"><input data-setting="dominanceMargin" type="number" step="0.01"><b>0–1</b></span><small data-help-for="dominanceMargin">Écart minimal entre A et B pour décider qu’un locuteur domine vraiment. Plus haut = moins de cuts sur les réactions courtes. Recommandé : 0,15.</small></label>
+          </div>
+          <div class="settings-actions"><span id="settingsStatus" class="muted">Réglages persistants dans le boîtier</span><button id="saveSettings" class="save-btn">Enregistrer</button></div>
+        </section>
+
+        <section class="card note-card"><div><p class="label">ÉTAT ACTUEL</p><h2 id="hardwareTitle">Aucune source branchée</h2><p id="hardwareCopy" class="muted">AUTO restera verrouillé jusqu’à calibration réelle et création des scènes.</p></div><div class="poll-indicator"><span id="pulse"></span><span id="lastUpdate">—</span></div></section>
+      </section>
+    </main>
+  </div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
