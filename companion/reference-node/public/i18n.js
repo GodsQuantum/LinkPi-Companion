@@ -1,0 +1,431 @@
+export const LOCALES = Object.freeze({
+  fr: Object.freeze({
+    'brand.tagline': 'Configurer, vérifier, enregistrer et streamer sans se perdre dans les menus.',
+    'guide.step.cameras.title': 'J’ai branché mes caméras',
+    'director.mode.auto': 'AUTO',
+    'language.label': 'Langue',
+  }),
+  en: Object.freeze({
+    'brand.tagline': 'Configure, verify, record and stream without getting lost in menus.',
+    'guide.step.cameras.title': 'I connected my cameras',
+    'director.mode.auto': 'AUTO',
+    'language.label': 'Language',
+  }),
+  'zh-CN': Object.freeze({
+    'brand.tagline': '轻松完成配置、检查、录制和推流，无需在菜单中迷路。',
+    'guide.step.cameras.title': '我已经连接好摄像机',
+    'director.mode.auto': '自动',
+    'language.label': '语言',
+  }),
+});
+
+const MESSAGES = Object.freeze({
+  fr: Object.freeze({
+    'guide.progress': 'Étape {current} / {total}',
+    'mode.ready': 'AUTO prêt à être armé.',
+    'mode.blocked': 'AUTO verrouillé · manque : {missing}',
+    'preflight.ready': 'PRÊT · tu peux lancer manuellement le workflow choisi.',
+    'preflight.blocked': '{status} · {count} point(s) à régler.',
+    'hardware.count': '{count} source(s) vidéo détectée(s)',
+    'hardware.none': 'Aucune source vidéo détectée',
+    'hardware.ready': 'Toutes les conditions techniques sont réunies. AUTO reste désarmé tant que tu ne l’actives pas.',
+    'hardware.blocked': 'DRY-RUN reste sans danger : aucune mutation vidéo. AUTO reste verrouillé tant que les sources, meters, calibration et scènes ne sont pas validés.',
+    'settings.unsaved': 'Modifications non enregistrées',
+    'settings.saved': 'Enregistré dans le LinkPi',
+    'settings.preset': 'Preset {name} appliqué',
+    'ui.disconnected': 'UI déconnectée',
+    'ui.serverError': 'Serveur Auto Director : {error}',
+    'settings.error': 'Erreur : {error}',
+  }),
+  en: Object.freeze({
+    'guide.progress': 'Step {current} / {total}',
+    'mode.ready': 'AUTO is ready to arm.',
+    'mode.blocked': 'AUTO locked · missing: {missing}',
+    'preflight.ready': 'READY · you can manually start the selected workflow.',
+    'preflight.blocked': '{status} · {count} item(s) to fix.',
+    'hardware.count': '{count} video source(s) detected',
+    'hardware.none': 'No video source detected',
+    'hardware.ready': 'All technical conditions are met. AUTO stays disarmed until you enable it.',
+    'hardware.blocked': 'DRY-RUN is safe: no video mutation. AUTO stays locked until sources, meters, calibration and scenes are validated.',
+    'settings.unsaved': 'Unsaved changes',
+    'settings.saved': 'Saved on the LinkPi',
+    'settings.preset': '{name} preset applied',
+    'ui.disconnected': 'UI disconnected',
+    'ui.serverError': 'Auto Director server: {error}',
+    'settings.error': 'Error: {error}',
+  }),
+  'zh-CN': Object.freeze({
+    'guide.progress': '步骤 {current} / {total}',
+    'mode.ready': 'AUTO 已可启用。',
+    'mode.blocked': 'AUTO 已锁定 · 缺少：{missing}',
+    'preflight.ready': '就绪 · 现在可以手动启动所选工作流程。',
+    'preflight.blocked': '{status} · 还有 {count} 项需要处理。',
+    'hardware.count': '已检测到 {count} 个视频信号源',
+    'hardware.none': '未检测到视频信号源',
+    'hardware.ready': '所有技术条件均已满足。AUTO 在你主动启用前仍保持关闭。',
+    'hardware.blocked': 'DRY-RUN 是安全的：不会修改视频。只有信号源、电平、校准和场景全部验证后，AUTO 才会解锁。',
+    'settings.unsaved': '有未保存的修改',
+    'settings.saved': '已保存到 LinkPi',
+    'settings.preset': '已应用 {name} 预设',
+    'ui.disconnected': '界面已断开',
+    'ui.serverError': 'Auto Director 服务：{error}',
+    'settings.error': '错误：{error}',
+  }),
+});
+
+const P = Object.freeze({
+  'Configurer, vérifier, enregistrer et streamer sans se perdre dans les menus.': ['Configure, verify, record and stream without getting lost in menus.', '轻松完成配置、检查、录制和推流，无需在菜单中迷路。'],
+  'INCOMPLET': ['INCOMPLETE', '未完成'],
+  'RPC hors ligne': ['RPC offline', 'RPC 离线'],
+  'Guide': ['Guide', '指南'],
+  'Auto Director': ['Auto Director', '自动导播'],
+  'État': ['Status', '状态'],
+  'UI LinkPi ↗': ['LinkPi UI ↗', 'LinkPi 界面 ↗'],
+  'GUIDE PAS À PAS': ['STEP-BY-STEP GUIDE', '分步指南'],
+  'Configurer mon LinkPi': ['Configure my LinkPi', '配置我的 LinkPi'],
+  'Tu viens de brancher les caméras ? Suis les étapes dans l’ordre. Le Companion vérifie ce qu’il peut automatiquement et te dit exactement quoi faire dans l’interface LinkPi quand une action manuelle est nécessaire.': ['Just connected your cameras? Follow the steps in order. Companion checks what it can automatically and tells you exactly what to do in the LinkPi UI when manual action is required.', '刚连接好摄像机？请按顺序完成以下步骤。Companion 会自动检查可检测项目，并在需要手动操作时明确告诉你应在 LinkPi 界面中做什么。'],
+  'Commencer': ['Start', '开始'],
+  'Connexion…': ['Connecting…', '正在连接…'],
+  'Caméras': ['Cameras', '摄像机'],
+  'Vérification…': ['Checking…', '正在检查…'],
+  'Stockage': ['Storage', '存储'],
+  'PARCOURS': ['WORKFLOW', '流程'],
+  'Vidéo + audio': ['Video + audio', '视频 + 音频'],
+  'Enregistrement': ['Recording', '录制'],
+  'Streaming': ['Streaming', '推流'],
+  'Prêt à diffuser': ['Ready to go live', '准备开播'],
+  'Réinitialiser le guide': ['Reset guide', '重置指南'],
+  'SOURCES': ['SOURCES', '信号源'],
+  'J’ai branché mes caméras': ['I connected my cameras', '我已经连接好摄像机'],
+  'À vérifier': ['CHECK', '待检查'],
+  'Objectif : voir les deux sources dans le LinkPi avant de toucher aux réglages avancés.': ['Goal: see both sources in LinkPi before touching advanced settings.', '目标：先确认 LinkPi 能看到两个信号源，再调整高级设置。'],
+  'Caméra A · HDMI': ['Camera A · HDMI', '摄像机 A · HDMI'],
+  'En attente du signal': ['Waiting for signal', '等待信号'],
+  'Caméra B · USB/UVC': ['Camera B · USB/UVC', '摄像机 B · USB/UVC'],
+  'Ouvrir les entrées LinkPi ↗': ['Open LinkPi inputs ↗', '打开 LinkPi 输入设置 ↗'],
+  'C’est bon': ['Looks good', '已确认'],
+  'Si une caméra n’apparaît pas': ['If a camera does not appear', '如果摄像机没有出现'],
+  'HDMI :': ['HDMI:', 'HDMI：'],
+  'vérifie alimentation caméra, sortie HDMI active et format vidéo supporté.': ['check camera power, active HDMI output and a supported video format.', '检查摄像机供电、HDMI 输出是否开启以及视频格式是否受支持。'],
+  'USB :': ['USB:', 'USB：'],
+  'mets la caméra en mode webcam/UVC, reconnecte-la et attends quelques secondes.': ['put the camera in webcam/UVC mode, reconnect it and wait a few seconds.', '将摄像机切换到 Webcam/UVC 模式，重新连接并等待几秒。'],
+  'Ne force pas AUTO tant que les deux sources ne sont pas réellement détectées.': ['Do not force AUTO until both sources are actually detected.', '在两个信号源都被正确检测到之前，不要强制启用自动模式。'],
+  'QUALITÉ': ['QUALITY', '质量'],
+  'Je règle vidéo + audio': ['I configure video + audio', '配置视频 + 音频'],
+  'Pour commencer simple : H.264, 1080p, fréquence identique aux caméras, audio AAC 48 kHz. Les valeurs finales seront ajustées après le vrai test matériel.': ['Start simple: H.264, 1080p, the same frame rate as the cameras, AAC 48 kHz audio. Final values will be tuned after real hardware testing.', '先从简单配置开始：H.264、1080p、与摄像机相同的帧率、AAC 48 kHz 音频。最终参数将在真实硬件测试后调整。'],
+  'Lecture des canaux…': ['Reading channels…', '正在读取通道…'],
+  'Important': ['Important', '重要'],
+  'Le son qui détecte “qui parle” pour Auto Director est séparé du son final du programme. Le stream doit conserver A + B en continu.': ['The audio used to detect who is speaking is separate from the final program audio. The stream must keep A + B continuously.', '用于判断“谁在说话”的检测音频与最终节目音频是分开的。推流中的节目音频应始终保留 A + B。'],
+  'Régler les canaux dans LinkPi ↗': ['Configure encoding in LinkPi ↗', '在 LinkPi 中配置编码 ↗'],
+  'Réglages vérifiés': ['Settings checked', '设置已检查'],
+  'Comprendre les réglages avancés': ['Understand advanced settings', '了解高级设置'],
+  'Bitrate :': ['Bitrate:', '码率：'],
+  'plus haut = meilleure qualité mais plus de débit et de charge.': ['higher = better quality, but more bandwidth and load.', '越高 = 画质更好，但带宽和负载也更高。'],
+  'GOP :': ['GOP:', 'GOP：'],
+  'garde une valeur simple tant qu’un diffuseur ne demande pas autre chose.': ['keep a simple value unless the streaming service asks for something else.', '除非平台有特殊要求，否则保持简单的 GOP 设置。'],
+  'CBR :': ['CBR:', 'CBR：'],
+  'pratique pour un débit de streaming prévisible.': ['useful for predictable streaming bandwidth.', '适合需要稳定、可预测推流码率的场景。'],
+  'RÉALISATION': ['DIRECTING', '导播'],
+  'Je prépare Auto Director': ['I prepare Auto Director', '准备自动导播'],
+  'À calibrer': ['CALIBRATE', '待校准'],
+  'Le Companion vérifie cinq verrous : RPC, deux caméras, deux meters audio, calibration des voix et scènes CAM A / CAM B / SPLIT.': ['Companion checks five gates: RPC, two cameras, two audio meters, voice calibration and CAM A / CAM B / SPLIT scenes.', 'Companion 会检查五个条件：RPC、两台摄像机、两个音频电平、语音校准以及 CAM A / CAM B / SPLIT 场景。'],
+  'Ordre conseillé': ['Recommended order', '推荐顺序'],
+  '1. silence du micro A/B → 2. parole normale A/B → 3. scènes → 4. DRY-RUN → 5. seulement ensuite AUTO.': ['1. mic A/B silence → 2. normal speech A/B → 3. scenes → 4. DRY-RUN → 5. only then AUTO.', '1. 麦克风 A/B 静音 → 2. A/B 正常讲话 → 3. 场景 → 4. DRY-RUN → 5. 最后才启用 AUTO。'],
+  'Ouvrir Auto Director': ['Open Auto Director', '打开自动导播'],
+  'DRY-RUN validé': ['DRY-RUN validated', 'DRY-RUN 已验证'],
+  'USB / ISO': ['USB / ISO', 'USB / ISO'],
+  'J’enregistre sur un disque externe': ['I record to an external drive', '录制到外接硬盘'],
+  'Objectif de production : enregistrer CAM A + CAM B + PROGRAM en MP4 sur le disque USB, tout en streamant le programme.': ['Production goal: record CAM A + CAM B + PROGRAM as MP4 files on the USB drive while streaming the program.', '制作目标：在推流节目的同时，将 CAM A + CAM B + PROGRAM 以 MP4 录制到 USB 硬盘。'],
+  'Lecture du stockage…': ['Reading storage…', '正在读取存储状态…'],
+  'Avant le vrai tournage': ['Before a real shoot', '正式拍摄前'],
+  'On doit benchmarker les trois enregistrements simultanés sur ton ENC1 V3. Le guide ne prétendra pas que c’est validé avant ce test.': ['The three simultaneous recordings must be benchmarked on the ENC1 V3. The guide will not claim this is validated before that test.', '必须在 ENC1 V3 上实测三个并行录制任务。在完成测试前，本指南不会声称该方案已经验证。'],
+  'Ouvrir Record / Storage ↗': ['Open Record / Storage ↗', '打开录制 / 存储 ↗'],
+  'Disque + MP4 vérifiés': ['Drive + MP4 checked', '硬盘 + MP4 已检查'],
+  'Format du disque et sécurité d’enregistrement': ['Drive format and recording safety', '硬盘格式与录制安全'],
+  'NTFS conseillé': ['NTFS recommended', '建议使用 NTFS'],
+  'pour un gros disque moderne. Évite FAT32 pour de longs tournages : un fichier FAT32 est limité à 4 Go.': ['for a modern large drive. Avoid FAT32 for long recordings: a FAT32 file is limited to 4 GB.', '用于现代大容量硬盘。长时间录制请避免 FAT32，因为单个 FAT32 文件最大约 4 GB。'],
+  'Fragmentation :': ['File splitting:', '分段录制：'],
+  'découper un long enregistrement en fichiers plus courts limite la casse en cas d’arrêt brutal.': ['splitting a long recording into shorter files limits damage after an unexpected stop.', '把长时间录制切分成较短文件，可降低异常断电或停止时的损失。'],
+  'Formats avancés disponibles : TS, MKV, MOV, FLV. En mode simple, reste sur MP4.': ['Advanced containers available: TS, MKV, MOV, FLV. In simple mode, stay with MP4.', '可选高级封装：TS、MKV、MOV、FLV。简单模式下建议继续使用 MP4。'],
+  'DESTINATION': ['DESTINATION', '目标地址'],
+  'Je choisis où streamer': ['I choose where to stream', '选择推流目的地'],
+  'À configurer': ['CONFIGURE', '待配置'],
+  'Choisis le protocole. Le Companion génère la valeur à copier dans LinkPi mais ne sauvegarde jamais ta clé de stream.': ['Choose the protocol. Companion generates the value to copy into LinkPi but never saves your stream key.', '选择协议。Companion 会生成可复制到 LinkPi 的值，但绝不会保存你的推流密钥。'],
+  'YouTube': ['YouTube', 'YouTube'],
+  'Twitch': ['Twitch', 'Twitch'],
+  'RTMP': ['RTMP', 'RTMP'],
+  'SRT': ['SRT', 'SRT'],
+  'RTP / UDP': ['RTP / UDP', 'RTP / UDP'],
+  'URL RTMPS YouTube': ['YouTube RTMPS URL', 'YouTube RTMPS 地址'],
+  'Clé de stream': ['Stream key', '推流密钥'],
+  'Dans YouTube Live Control Room : Paramètres de flux → copie l’URL RTMPS puis la clé. Le Companion ne les enregistre pas.': ['In YouTube Live Control Room: Stream settings → copy the RTMPS URL and then the stream key. Companion does not store them.', '在 YouTube Live Control Room 中：流设置 → 复制 RTMPS 地址和推流密钥。Companion 不会保存这些信息。'],
+  'Renseigne l’URL et la clé.': ['Enter the URL and key.', '请输入地址和密钥。'],
+  'Copier': ['Copy', '复制'],
+  'Serveur Twitch / ingest': ['Twitch server / ingest', 'Twitch 服务器 / Ingest'],
+  'Stream Key Twitch': ['Twitch Stream Key', 'Twitch 推流密钥'],
+  'Copie le serveur/ingest et ta Stream Key depuis Twitch. Ne partage jamais cette clé.': ['Copy the server/ingest and your Stream Key from Twitch. Never share that key.', '从 Twitch 复制服务器/Ingest 地址和 Stream Key。绝不要分享这个密钥。'],
+  'Renseigne le serveur et la clé.': ['Enter the server and key.', '请输入服务器和密钥。'],
+  'Serveur RTMP / RTMPS': ['RTMP / RTMPS server', 'RTMP / RTMPS 服务器'],
+  'Clé / nom du flux': ['Key / stream name', '密钥 / 流名称'],
+  'RTMPS = RTMP chiffré. Si ton fournisseur te donne RTMPS, garde bien': ['RTMPS = encrypted RTMP. If your provider gives you RTMPS, keep the', 'RTMPS = 加密的 RTMP。如果服务商提供 RTMPS，请保留'],
+  'Mode': ['Mode', '模式'],
+  'Caller': ['Caller', 'Caller'],
+  'Listener': ['Listener', 'Listener'],
+  'Rendezvous': ['Rendezvous', 'Rendezvous'],
+  'Hôte / IP': ['Host / IP', '主机 / IP'],
+  'Port': ['Port', '端口'],
+  'Latence ms': ['Latency ms', '延迟 ms'],
+  'SRT avancé : chiffrement / streamid': ['Advanced SRT: encryption / streamid', 'SRT 高级：加密 / streamid'],
+  'Passphrase': ['Passphrase', '密码短语'],
+  'Stream ID': ['Stream ID', 'Stream ID'],
+  'Renseigne l’hôte et le port.': ['Enter the host and port.', '请输入主机和端口。'],
+  'Destination IP': ['Destination IP', '目标 IP'],
+  'TTL': ['TTL', 'TTL'],
+  'En-tête RTP': ['RTP header', 'RTP 头'],
+  'Unicast = une IP de destination. Multicast = une adresse 224.0.0.0–239.255.255.255. Dans LinkPi, RTP correspond à UDP avec l’option RTP activée.': ['Unicast = one destination IP. Multicast = an address from 224.0.0.0–239.255.255.255. In LinkPi, RTP is UDP with the RTP option enabled.', '单播 = 一个目标 IP。组播 = 224.0.0.0–239.255.255.255 范围内的地址。在 LinkPi 中，RTP 即启用 RTP 选项的 UDP。'],
+  'Renseigne une IP et un port.': ['Enter an IP and port.', '请输入 IP 和端口。'],
+  'Ouvrir Push / Stream LinkPi ↗': ['Open LinkPi Push / Stream ↗', '打开 LinkPi 推流 / Stream ↗'],
+  'Destination vérifiée': ['Destination checked', '目标已检查'],
+  'Multi-destination et choix du protocole': ['Multiple destinations and protocol choice', '多目标与协议选择'],
+  'RTMPS :': ['RTMPS:', 'RTMPS：'],
+  'choix simple pour YouTube quand disponible.': ['a simple choice for YouTube when available.', 'YouTube 支持时的简单选择。'],
+  'SRT :': ['SRT:', 'SRT：'],
+  'robuste sur Internet instable et très pratique point-à-point.': ['robust over unstable Internet and very useful point-to-point.', '在不稳定互联网环境中更可靠，也非常适合点对点传输。'],
+  'RTP/UDP :': ['RTP/UDP:', 'RTP/UDP：'],
+  'excellent sur LAN ou infrastructure maîtrisée ; multicast permet plusieurs récepteurs.': ['excellent on a LAN or controlled infrastructure; multicast supports multiple receivers.', '非常适合局域网或可控网络；组播可同时服务多个接收端。'],
+  'Le LinkPi sait gérer plusieurs destinations : valide-les d’abord une par une.': ['LinkPi supports multiple destinations: validate them one at a time first.', 'LinkPi 支持多个目标：请先逐个验证，再同时启用。'],
+  'CHECK FINAL': ['FINAL CHECK', '最终检查'],
+  'Je suis prêt à diffuser': ['I am ready to go live', '我已准备好开播'],
+  'Choisis ton workflow. Le Companion ne bloque pas sur ce que tu n’utilises pas.': ['Choose your workflow. Companion does not block on features you are not using.', '选择你的工作流程。未使用的功能不会阻止 READY 状态。'],
+  'INCOMPLET · suis les actions ci-dessus.': ['INCOMPLETE · follow the actions above.', '未完成 · 请按上方提示操作。'],
+  'Lancement manuel v1': ['Manual launch in v1', 'v1 手动启动'],
+  'Une fois READY, démarre l’enregistrement et le push depuis l’UI LinkPi native. Le Companion ne lance rien tout seul.': ['Once READY, start recording and push from the native LinkPi UI. Companion does not start anything automatically.', '显示 READY 后，请从 LinkPi 原生界面手动开始录制和推流。Companion 不会自行启动任何输出。'],
+  'Voir l’état détaillé': ['View detailed status', '查看详细状态'],
+  'Ouvrir LinkPi pour lancer ↗': ['Open LinkPi to start ↗', '打开 LinkPi 启动 ↗'],
+  '← Précédent': ['← Previous', '← 上一步'],
+  'Suivant →': ['Next →', '下一步 →'],
+  'DIAGNOSTIC': ['DIAGNOSTICS', '诊断'],
+  'État du LinkPi': ['LinkPi status', 'LinkPi 状态'],
+  'Une vue simple de ce qui fonctionne et de ce qui manque avant un tournage.': ['A simple view of what works and what is missing before a shoot.', '简单查看哪些项目正常、哪些项目需要在拍摄前处理。'],
+  'CAROUSEL': ['CAROUSEL', '轮播'],
+  'Arrêté': ['Stopped', '已停止'],
+  'Caméras détectées': ['Detected cameras', '已检测摄像机'],
+  'À FAIRE': ['TO DO', '待处理'],
+  'Qu’est-ce qui bloque ?': ['What is blocking readiness?', '是什么阻止了 READY？'],
+  'STOCKAGE / STREAM': ['STORAGE / STREAM', '存储 / 推流'],
+  'Lecture de la configuration de production.': ['Reading production configuration.', '正在读取制作配置。'],
+  'Retour au guide': ['Back to guide', '返回指南'],
+  'RÉALISATION AUTOMATIQUE': ['AUTOMATIC DIRECTING', '自动导播'],
+  'Réglages avancés de la réalisation audio-driven. Commence par le Guide si le matériel n’est pas encore calibré.': ['Advanced audio-driven directing settings. Start with the Guide if the hardware has not been calibrated yet.', '基于音频驱动的高级导播设置。如果硬件尚未校准，请先从指南开始。'],
+  'MODE': ['MODE', '模式'],
+  'DRY‑RUN': ['DRY‑RUN', '试运行'],
+  'Connexion au boîtier…': ['Connecting to device…', '正在连接设备…'],
+  'PROGRAMME': ['PROGRAM', '节目'],
+  'En attente de télémétrie': ['Waiting for telemetry', '等待遥测数据'],
+  'SAFE SPLIT': ['SAFE SPLIT', '安全分屏'],
+  'DÉTECTION': ['DETECTION', '检测'],
+  'Micros': ['Microphones', '麦克风'],
+  'Aucune décision': ['No decision', '暂无决策'],
+  'VERROUS': ['GATES', '条件'],
+  'Readiness AUTO': ['AUTO readiness', 'AUTO 就绪状态'],
+  'Comportement Auto Director': ['Auto Director behavior', '自动导播行为'],
+  'Stable': ['Stable', '稳定'],
+  'Naturel': ['Natural', '自然'],
+  'Réactif': ['Reactive', '灵敏'],
+  'Guide rapide · comment régler sans rendre la réalisation nerveuse': ['Quick guide · tune without making cuts nervous', '快速指南 · 如何避免切换过于频繁'],
+  '· interviews posées, plans plus longs, moins de cuts.': ['· calm interviews, longer shots, fewer cuts.', '· 适合节奏平稳的访谈，镜头更长、切换更少。'],
+  '· recommandé pour podcast / interview classique.': ['· recommended for a typical podcast / interview.', '· 推荐用于常规播客 / 访谈。'],
+  '· échanges rapides, davantage de changements de caméra.': ['· fast exchanges, more camera changes.', '· 适合快速对话，会有更多机位切换。'],
+  'Anti ping-pong :': ['Anti ping-pong:', '防止来回切换：'],
+  'augmente d’abord': ['increase first', '优先增大'],
+  'Durée minimale du plan': ['Minimum shot duration', '最短镜头时长'],
+  'et': ['and', '和'],
+  'Période réfractaire': ['Refractory period', '冷却时间'],
+  'Délai avant changement': ['Speaker acquisition delay', '切换前确认时长'],
+  'Temps pendant lequel un nouveau locuteur doit dominer avant le cut. Plus haut = moins de va-et-vient. Recommandé : 900 ms.': ['How long a new speaker must dominate before a cut. Higher = less back-and-forth. Recommended: 900 ms.', '新说话者需要持续占优多久才切换。数值越高 = 来回切换越少。推荐：900 ms。'],
+  'Durée minimale d’un plan': ['Minimum shot duration', '最短镜头时长'],
+  'Après un cut, la caméra reste au moins ce temps avant d’autoriser un autre changement. Plus haut = plus stable. Recommandé : 5000 ms.': ['After a cut, keep that camera for at least this long before allowing another change. Higher = more stable. Recommended: 5000 ms.', '切换后至少保持当前机位这么久，才允许下一次切换。数值越高 = 越稳定。推荐：5000 ms。'],
+  'Fenêtre juste après un cut pendant laquelle aucune nouvelle coupe n’est acceptée. Plus haut = plus calme. Recommandé : 2500 ms.': ['Window just after a cut during which no new cut is accepted. Higher = calmer. Recommended: 2500 ms.', '刚切换后的保护窗口，在此期间不接受新的切换。数值越高 = 越平稳。推荐：2500 ms。'],
+  'Chevauchement → Split': ['Overlap → Split', '重叠讲话 → 分屏'],
+  'Si A et B parlent ensemble au moins ce temps, passage au plan partagé. Plus bas = split plus rapide. Recommandé : 1000 ms.': ['If A and B talk together for at least this long, switch to split. Lower = faster split. Recommended: 1000 ms.', '如果 A 和 B 同时讲话达到该时长，则切换到分屏。数值越低 = 越快进入分屏。推荐：1000 ms。'],
+  'Maintien du Split': ['Split hold', '分屏保持时长'],
+  'Durée minimale du plan partagé après un chevauchement. Évite de recouper immédiatement. Recommandé : 3000 ms.': ['Minimum duration of the shared shot after overlap. Prevents an immediate recut. Recommended: 3000 ms.', '重叠讲话后分屏至少保持这么久，避免立即再次切换。推荐：3000 ms。'],
+  'Silence → Split': ['Silence → Split', '静音 → 分屏'],
+  'Après ce silence des deux micros, retour au plan neutre partagé. Plus haut = garde le dernier gros plan plus longtemps. Recommandé : 7000 ms.': ['After both mics remain quiet this long, return to the neutral split. Higher = keep the last close-up longer. Recommended: 7000 ms.', '两个麦克风静音达到该时长后，返回中性的分屏画面。数值越高 = 保留最后一个特写越久。推荐：7000 ms。'],
+  'Seuil parole A': ['Speech threshold A', 'A 讲话阈值'],
+  'Niveau minimal pour considérer A comme parlant. Plus bas = plus sensible au bruit. Recommandé : 0,35 avant calibration fine.': ['Minimum level for A to count as speaking. Lower = more sensitive to noise. Recommended: 0.35 before fine calibration.', '判定 A 正在讲话的最低电平。数值越低 = 越容易受噪声影响。精细校准前推荐：0.35。'],
+  'Seuil parole B': ['Speech threshold B', 'B 讲话阈值'],
+  'Niveau minimal pour considérer B comme parlant. Plus bas = plus sensible au bruit. Recommandé : 0,35 avant calibration fine.': ['Minimum level for B to count as speaking. Lower = more sensitive to noise. Recommended: 0.35 before fine calibration.', '判定 B 正在讲话的最低电平。数值越低 = 越容易受噪声影响。精细校准前推荐：0.35。'],
+  'Marge de dominance': ['Dominance margin', '主导差值'],
+  'Écart minimal entre A et B pour décider qu’un locuteur domine vraiment. Plus haut = moins de cuts sur les réactions courtes. Recommandé : 0,15.': ['Minimum gap between A and B before one speaker is considered dominant. Higher = fewer cuts on short reactions. Recommended: 0.15.', 'A 与 B 之间至少达到该差值，才认为某位说话者真正占优。数值越高 = 短回应引发的切换越少。推荐：0.15。'],
+  'Réglages persistants dans le boîtier': ['Settings persist on the device', '设置会持久保存在设备中'],
+  'Enregistrer': ['Save', '保存'],
+  'ÉTAT ACTUEL': ['CURRENT STATUS', '当前状态'],
+  'Aucune source branchée': ['No source connected', '未连接信号源'],
+  'AUTO restera verrouillé jusqu’à calibration réelle et création des scènes.': ['AUTO remains locked until real calibration and scene creation are complete.', '在完成真实校准和场景创建前，AUTO 将保持锁定。'],
+  'RPC connecté': ['RPC connected', 'RPC 已连接'],
+  'RPC indisponible': ['RPC unavailable', 'RPC 不可用'],
+  'Signal détecté': ['Signal detected', '已检测到信号'],
+  'Aucun signal HDMI': ['No HDMI signal', '无 HDMI 信号'],
+  'Source UVC détectée': ['UVC source detected', '已检测到 UVC 信号源'],
+  'Aucune source USB/UVC': ['No USB/UVC source', '无 USB/UVC 信号源'],
+  'Calibration/scènes incomplètes': ['Calibration/scenes incomplete', '校准/场景未完成'],
+  'Prêt à armer': ['Ready to arm', '可以启用'],
+  'PRÊT': ['READY', '就绪'],
+  'PROBLÈME': ['PROBLEM', '问题'],
+  'Aucun blocage détecté pour le workflow sélectionné.': ['No blocker detected for the selected workflow.', '所选工作流程未发现阻塞项。'],
+  'Disque externe configuré': ['External drive configured', '外接硬盘已配置'],
+  'Aucun disque externe confirmé': ['No external drive confirmed', '未确认外接硬盘'],
+  'Disque externe à préparer': ['External drive needs setup', '需要配置外接硬盘'],
+  'MP4 activé': ['MP4 enabled', 'MP4 已启用'],
+  'MP4 non activé': ['MP4 not enabled', 'MP4 未启用'],
+  'Stockage externe configuré': ['External storage configured', '外部存储已配置'],
+  'Stockage externe non confirmé': ['External storage not confirmed', '未确认外部存储'],
+  'MP4 actif': ['MP4 active', 'MP4 已启用'],
+  'MP4 à activer': ['Enable MP4', '需要启用 MP4'],
+  'Aucun canal lisible pour le moment.': ['No readable channel yet.', '暂时没有可读取的通道。'],
+  'Langue': ['Language', '语言'],
+  'Français': ['Français', '法语'],
+  'Scènes Carousel LinkPi ↗': ['LinkPi Carousel scenes ↗', 'LinkPi Carousel 场景 ↗'],
+  'Mix LinkPi ↗': ['LinkPi Mix ↗', 'LinkPi 混合 ↗'],
+  'Ouvrir Record LinkPi ↗': ['Open LinkPi Record ↗', '打开 LinkPi 录制 ↗'],
+  'Ouvrir Storage LinkPi ↗': ['Open LinkPi Storage ↗', '打开 LinkPi 存储 ↗'],
+  'Ouvrir Stream LinkPi ↗': ['Open LinkPi Stream ↗', '打开 LinkPi Stream ↗'],
+  'Ouvrir Push LinkPi ↗': ['Open LinkPi Push ↗', '打开 LinkPi 推流 ↗'],
+  'RPC LinkPi': ['LinkPi RPC', 'LinkPi RPC'],
+  'boîtier joignable': ['device reachable', '设备可访问'],
+  '2 sources vidéo présentes': ['2 video sources present', '存在 2 个视频信号源'],
+  'Meters A/B': ['Meters A/B', 'A/B 电平'],
+  '2 signaux audio observables': ['2 observable audio signals', '可观测到 2 路音频信号'],
+  'Calibration': ['Calibration', '校准'],
+  'silence + parole référencés': ['silence + speech referenced', '已记录静音 + 讲话参考值'],
+  'Scènes': ['Scenes', '场景'],
+  'A / B / split validés': ['A / B / split validated', 'A / B / 分屏已验证'],
+  'À CALIBRER': ['CALIBRATE', '待校准'],
+  'À VÉRIFIER': ['CHECK', '待检查'],
+  'BON DÉBUT': ['GOOD START', '初步正常'],
+  'Détecté': ['Detected', '已检测'],
+  'Absent': ['Absent', '缺失'],
+  'Actif': ['Active', '运行中'],
+  'Aucune décision éditoriale': ['No editorial decision', '暂无导播决策'],
+  'Stable': ['Stable', '稳定'],
+  'Complète les champs.': ['Complete the fields.', '请完整填写字段。'],
+  'Copié ✓': ['Copied ✓', '已复制 ✓'],
+  'Copie impossible': ['Copy failed', '复制失败'],
+  'LinkPi joignable': ['LinkPi reachable', 'LinkPi 可访问'],
+  'RPC OK.': ['RPC OK.', 'RPC 正常。'],
+  'Le Companion ne communique pas avec l’Encoder.': ['Companion cannot communicate with the Encoder.', 'Companion 无法与 Encoder 通信。'],
+  'Une source vidéo au minimum': ['At least one video source', '至少一个视频信号源'],
+  'Branche et active au moins une caméra.': ['Connect and enable at least one camera.', '请连接并启用至少一台摄像机。'],
+  'Auto Director prêt': ['Auto Director ready', '自动导播就绪'],
+  'Caméras, meters, calibration et scènes validés.': ['Cameras, meters, calibration and scenes validated.', '摄像机、电平、校准和场景均已验证。'],
+  'Disque externe': ['External drive', '外接硬盘'],
+  'Stockage externe configuré.': ['External storage configured.', '外部存储已配置。'],
+  'Configure le disque USB externe dans Storage.': ['Configure the external USB drive in Storage.', '请在 Storage 中配置外接 USB 硬盘。'],
+  'Format MP4': ['MP4 format', 'MP4 格式'],
+  'MP4 activé.': ['MP4 enabled.', 'MP4 已启用。'],
+  'Active MP4 dans Record.': ['Enable MP4 in Record.', '请在 Record 中启用 MP4。'],
+  'Destination de streaming': ['Streaming destination', '推流目的地'],
+  'Configure puis active au moins une destination Push/Stream dans le LinkPi.': ['Configure and enable at least one Push/Stream destination in LinkPi.', '请在 LinkPi 中配置并启用至少一个 Push/Stream 目标。'],
+  'Choisis un workflow': ['Choose a workflow', '选择工作流程'],
+  'Coche Auto Director, Enregistrement et/ou Streaming.': ['Select Auto Director, Recording and/or Streaming.', '请选择自动导播、录制和/或推流。'],
+  'Aucun blocage détecté': ['No blocker detected', '未检测到阻塞项'],
+  'Les éléments sélectionnés sont prêts.': ['The selected items are ready.', '所选项目均已就绪。'],
+  'télémétrie': ['telemetry', '遥测数据'],
+  'Candidat': ['Candidate', '候选'],
+  'Toutes les conditions techniques sont réunies. AUTO reste désarmé tant que tu ne l’actives pas.': ['All technical conditions are met. AUTO stays disarmed until you enable it.', '所有技术条件均已满足。AUTO 在你主动启用前仍保持关闭。'],
+  'DRY‑RUN reste sans danger : aucune mutation vidéo. AUTO reste verrouillé tant que les sources, meters, calibration et scènes ne sont pas validés.': ['DRY-RUN is safe: no video mutation. AUTO stays locked until sources, meters, calibration and scenes are validated.', 'DRY-RUN 是安全的：不会修改视频。只有信号源、电平、校准和场景全部验证后，AUTO 才会解锁。'],
+  'Server must use RTMP or RTMPS': ['Server must use RTMP or RTMPS', '服务器必须使用 RTMP 或 RTMPS'],
+  'Stream key is required': ['Stream key is required', '必须填写推流密钥'],
+  'Host is required': ['Host is required', '必须填写主机地址'],
+  'Port must be between 1 and 65535': ['Port must be between 1 and 65535', '端口必须在 1 到 65535 之间'],
+  'Invalid SRT mode': ['Invalid SRT mode', 'SRT 模式无效'],
+  'Latency must be 20–8000 ms': ['Latency must be 20–8000 ms', '延迟必须在 20–8000 ms 之间'],
+  'Destination must be a valid IPv4 address': ['Destination must be a valid IPv4 address', '目标必须是有效的 IPv4 地址'],
+  'TTL must be 1–255': ['TTL must be 1–255', 'TTL 必须在 1–255 之间'],
+  'Navigation LinkPi Companion': ['LinkPi Companion navigation', 'LinkPi Companion 导航'],
+  'État rapide': ['Quick status', '快速状态'],
+  'Progression du guide': ['Guide progress', '指南进度'],
+});
+const localeIndex = Object.freeze({ en: 0, 'zh-CN': 1 });
+const textSources = new WeakMap();
+const attrSources = new WeakMap();
+
+export function normalizeLocale(locale) {
+  if (locale === 'zh' || locale === 'zh-cn' || locale === 'zh-CN') return 'zh-CN';
+  if (locale === 'en') return 'en';
+  return 'fr';
+}
+
+export function t(locale, key, vars = {}) {
+  const lang = normalizeLocale(locale);
+  let value = MESSAGES[lang]?.[key] ?? LOCALES[lang]?.[key] ?? MESSAGES.fr[key] ?? LOCALES.fr[key] ?? key;
+  for (const [name, replacement] of Object.entries(vars)) {
+    value = value.replaceAll(`{${name}}`, String(replacement));
+  }
+  return value;
+}
+
+function dynamicTranslation(locale, source) {
+  let m = source.match(/^(\d+) \/ 2 détectées$/);
+  if (m) return locale === 'en' ? `${m[1]} / 2 detected` : `已检测 ${m[1]} / 2`;
+  m = source.match(/^Étape (\d+) \/ (\d+)$/);
+  if (m) return locale === 'en' ? `Step ${m[1]} / ${m[2]}` : `步骤 ${m[1]} / ${m[2]}`;
+  m = source.match(/^(.*) · actif$/);
+  if (m) return locale === 'en' ? `${m[1]} · active` : `${m[1]} · 已启用`;
+  m = source.match(/^(.*) · inactif$/);
+  if (m) return locale === 'en' ? `${m[1]} · inactive` : `${m[1]} · 未启用`;
+  m = source.match(/^(\d+) canal\(aux\) sélectionné\(s\)$/);
+  if (m) return locale === 'en' ? `${m[1]} channel(s) selected` : `已选择 ${m[1]} 个通道`;
+  m = source.match(/^(\d+) source\(s\) détectée\(s\)\.$/);
+  if (m) return locale === 'en' ? `${m[1]} source(s) detected.` : `已检测到 ${m[1]} 个信号源。`;
+  m = source.match(/^(\d+) canaux sélectionnés\.$/);
+  if (m) return locale === 'en' ? `${m[1]} channels selected.` : `已选择 ${m[1]} 个通道。`;
+  m = source.match(/^Seulement (\d+) canal\(aux\) sélectionné\(s\) : vise 3 après benchmark\.$/);
+  if (m) return locale === 'en' ? `Only ${m[1]} channel(s) selected: target 3 after benchmarking.` : `目前仅选择 ${m[1]} 个通道：完成性能测试后目标为 3 个。`;
+  m = source.match(/^(\d+) destination\(s\) activée\(s\)\.$/);
+  if (m) return locale === 'en' ? `${m[1]} destination(s) enabled.` : `已启用 ${m[1]} 个目标。`;
+  m = source.match(/^Manque : (.*)\.$/);
+  if (m) return locale === 'en' ? `Missing: ${m[1]}.` : `缺少：${m[1]}。`;
+  return null;
+}
+export function translateText(locale, source) {
+  const lang = normalizeLocale(locale);
+  if (lang === 'fr') return source;
+  const pair = P[source];
+  if (pair) return pair[localeIndex[lang]];
+  return dynamicTranslation(lang, source) ?? source;
+}
+
+function translateNode(node, locale) {
+  if (!textSources.has(node)) textSources.set(node, node.nodeValue);
+  const original = textSources.get(node);
+  const core = original.trim();
+  if (!core) return;
+  const before = original.slice(0, original.indexOf(core));
+  const after = original.slice(original.indexOf(core) + core.length);
+  node.nodeValue = `${before}${translateText(locale, core)}${after}`;
+}
+
+function translateAttributes(element, locale) {
+  const attrs = ['placeholder', 'title', 'aria-label'];
+  let originals = attrSources.get(element);
+  if (!originals) { originals = {}; attrSources.set(element, originals); }
+  for (const name of attrs) {
+    if (!element.hasAttribute?.(name)) continue;
+    if (!(name in originals)) originals[name] = element.getAttribute(name);
+    element.setAttribute(name, translateText(locale, originals[name]));
+  }
+}
+
+export function applyLocale(locale, root = document) {
+  const lang = normalizeLocale(locale);
+  document.documentElement.lang = lang;
+  const walker = document.createTreeWalker(root.body ?? root, NodeFilter.SHOW_TEXT);
+  while (walker.nextNode()) {
+    const parent = walker.currentNode.parentElement;
+    if (!parent || ['SCRIPT', 'STYLE', 'CODE'].includes(parent.tagName)) continue;
+    translateNode(walker.currentNode, lang);
+  }
+  for (const element of (root.querySelectorAll?.('*') ?? [])) translateAttributes(element, lang);
+}

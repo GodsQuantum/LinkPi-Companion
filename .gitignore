@@ -1,0 +1,23 @@
+# Local/private captures from real devices
+docs/history/
+local-private/
+backups/
+*.zip
+*.bundle
+
+# Runtime/generated config that may contain site-specific data
+companion/embedded/hardware.json
+companion/embedded/settings.json
+.env
+.env.*
+
+# Logs / OS / editor noise
+*.log
+.DS_Store
+.idea/
+.vscode/
+node_modules/
+coverage/
+
+# Local Git worktrees
+.worktrees/

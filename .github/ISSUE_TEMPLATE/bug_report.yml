@@ -1,0 +1,48 @@
+name: Bug report
+description: Report a reproducible LinkPi Companion problem
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: "Do not paste passwords, stream keys, private URLs or raw device backups."
+  - type: input
+    id: model
+    attributes:
+      label: LinkPi model / SoC
+      placeholder: "ENC1 V3 / SS524V100"
+    validations:
+      required: true
+  - type: input
+    id: firmware
+    attributes:
+      label: Firmware
+      placeholder: "APP / SDK / SYS versions"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Include the smallest reliable reproduction.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior / sanitized logs
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed credentials, stream keys and personal/device-specific secrets.
+          required: true

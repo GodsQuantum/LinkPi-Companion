@@ -1,0 +1,10 @@
+{
+  "name": "linkpi-companion-reference",
+  "version": "0.3.0-alpha.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "start": "node src/app.js"
+  }
+}

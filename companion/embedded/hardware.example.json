@@ -1,0 +1,21 @@
+{
+  "detectors": {
+    "a": {"channelId": 0, "side": "max"},
+    "b": {"channelId": 1, "side": "max"}
+  },
+  "calibration": {
+    "a": null,
+    "b": null
+  },
+  "videoSources": {
+    "a": 0,
+    "b": 1
+  },
+  "scenesReady": false,
+  "sceneToLayId": {
+    "CAM_A": null,
+    "CAM_B": null,
+    "SPLIT": null
+  },
+  "carouselSourceKey": "source1"
+}
