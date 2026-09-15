@@ -1,49 +1,52 @@
-# LinkPi Companion
+<p align="center">
+  <img src="docs/assets/logo.svg" width="132" alt="Logo LinkPi Companion">
+</p>
 
+<h1 align="center">LinkPi Companion</h1>
 
-[![CI](https://github.com/GodsQuantum/linkpi-companion/actions/workflows/ci.yml/badge.svg)](https://github.com/GodsQuantum/linkpi-companion/actions/workflows/ci.yml) [![CodeQL](https://github.com/GodsQuantum/linkpi-companion/actions/workflows/codeql.yml/badge.svg)](https://github.com/GodsQuantum/linkpi-companion/actions/workflows/codeql.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[English](README.md) · **Français** · [中文](README.zh-CN.md)
+<p align="center"><strong>Transforme ton LinkPi en régie multicam guidée, enregistreur, streamer et réalisateur automatique.</strong></p>
 
-Compagnon embarqué et régie automatique autonome pour les encodeurs de la famille LinkPi ENC1 V3.
+<p align="center">
+  Configuration des caméras, vérification de l’enregistrement, assistants RTMP/RTMPS/SRT/RTP et Auto Director piloté par l’audio — directement sur le LinkPi, sans remplacer son Encoder natif.
+</p>
 
-Le principe est volontairement simple : tu branches caméras et stockage au LinkPi, tu ouvres `http://<IP_LINKPI>:8787`, et le **Guide** t’emmène de **« j’ai branché mes caméras »** à **« je peux enregistrer et streamer proprement »**, sans remplacer l’Encoder natif LinkPi.
+<p align="center">
+  <img src="https://img.shields.io/badge/appareil-LinkPi%20ENC1%20V3-18a7ff" alt="LinkPi ENC1 V3">
+  <img src="https://img.shields.io/badge/UI-EN%20%7C%20FR%20%7C%20%E4%B8%AD%E6%96%87-9d78ff" alt="Interface anglais français chinois">
+  <img src="https://img.shields.io/badge/stream-RTMP%20%7C%20SRT%20%7C%20RTP-63f2e9" alt="RTMP SRT RTP">
+  <img src="https://img.shields.io/badge/licence-MIT-3dd7cf" alt="Licence MIT">
+  <a href="https://github.com/GodsQuantum/linkpi-companion/actions/workflows/ci.yml"><img src="https://github.com/GodsQuantum/linkpi-companion/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+</p>
 
-## Langues
+<p align="center">🇬🇧 <a href="README.md">English</a> · 🇨🇳 <a href="README.zh-CN.md">简体中文</a></p>
 
-L’UI Companion est disponible en **français, anglais et chinois simplifié**. Choisis la langue dans l’en-tête ou ouvre directement `?lang=fr`, `?lang=en` ou `?lang=zh-CN`.
+---
 
-## Ce qu’on trouve sur le port 8787
+<p align="center"><img src="docs/assets/screenshot-guide.png" width="920" alt="Guide de configuration LinkPi Companion"></p>
+<p align="center"><i>Un parcours en six étapes transforme l’interface dense d’un encodeur en checklist pratique.</i></p>
 
-Le **Guide** est la page d’accueil. Il contient six étapes :
+## Pourquoi LinkPi Companion ?
 
-1. **Caméras** — détection HDMI et USB/UVC en direct.
-2. **Vidéo + audio** — résumé lisible des canaux et réglages de départ conseillés.
-3. **Auto Director** — readiness, calibration des micros et scènes CAM A / CAM B / SPLIT.
-4. **Enregistrement** — disque externe, MP4 et objectif CAM A + CAM B + PROGRAM.
-5. **Streaming** — assistants RTMP/RTMPS, SRT et RTP/UDP avec valeurs validées à copier.
-6. **Prêt à diffuser** — checklist PRÊT / INCOMPLET / PROBLÈME adaptée au workflow choisi.
+Un LinkPi sait faire énormément de choses. Le problème est surtout de se souvenir **où se trouve chaque réglage**, quoi mettre dans chaque champ de streaming, si l’enregistrement est réellement prêt et si la réalisation automatique peut être armée sans mauvaise surprise.
 
-La même interface contient l’onglet complet **Auto Director**, un onglet **État**, et un accès direct à l’interface Web native du LinkPi.
+LinkPi Companion rassemble le workflow sur `http://<IP_LINKPI>:8787` :
 
-Les détails avancés restent repliés par défaut. La progression du guide ne mémorise dans le navigateur que l’étape courante et les étapes cochées. Les clés de stream, passphrases et identifiants ne sont jamais persistés par Companion.
+- **Guide pas à pas** — caméras → vidéo/audio → Auto Director → enregistrement → streaming → preflight.
+- **Liens natifs précis** — Input, Encode, Stream, Push, Record, Storage, Carousel et Mix ouvrent directement la bonne page LinkPi.
+- **Assistants streaming** — génération/validation RTMP/RTMPS, SRT et RTP/UDP sans stocker les clés.
+- **Readiness enregistrement** — disque externe, MP4 et objectif CAM A + CAM B + PROGRAM.
+- **Auto Director** — décisions CAM A / CAM B / SPLIT pilotées par l’audio avec protections anti ping-pong.
+- **Sûr par défaut** — l’Encoder C++ natif reste maître et AUTO reste verrouillé tant que la readiness n’est pas prouvée.
+- **Portable** — le Companion vit sur le LinkPi : le guide part avec le boîtier.
 
-## État du projet
+<p align="center">
+  <img src="docs/assets/screenshot-streaming.png" width="455" alt="Assistant SRT et streaming LinkPi Companion">
+  <img src="docs/assets/screenshot-autodirector.png" width="455" alt="Contrôles Auto Director LinkPi Companion">
+</p>
 
-**Alpha : la validation logicielle pré-matériel est terminée ; la mise en service avec les vraies caméras et les vrais micros reste à faire.**
+## Installation rapide
 
-Cible de développement validée :
-
-- LinkPi ENC1 V3 / SS524V100
-- APP/SDK 5.3.0, SYS 5.3.1 (20260731)
-- PHP CLI embarqué : `/usr/php/bin/php`
-- RPC natif de l’Encoder : `/RPC`
-- LinkPi Companion : `http://<IP_LINKPI>:8787`
-
-Le mode `AUTO` reste verrouillé côté serveur tant que les deux caméras, les deux télémétries micro indépendantes, la calibration et les scènes A/B/SPLIT ne sont pas validées.
-
-## Installation / récupération ultra-simple
-
-Depuis une machine sur le même LAN :
+Depuis n’importe quelle machine Linux/macOS sur le même LAN :
 
 ```bash
 git clone https://github.com/GodsQuantum/linkpi-companion.git
@@ -51,13 +54,13 @@ cd linkpi-companion
 ./scripts/install.sh <IP_LINKPI>
 ```
 
-Exemple après factory reset :
+Puis ouvre :
 
-```bash
-./scripts/install.sh 192.168.1.217
+```text
+http://<IP_LINKPI>:8787
 ```
 
-Sur le firmware testé, l’installation passe par le mécanisme natif de restauration de configuration LinkPi : SSH n’est pas nécessaire. L’installateur sauvegarde l’existant, conserve les mappings matériel/calibration et les réglages Auto Director, fusionne son watchdog avec le cron existant, déploie Companion puis vérifie le port `8787`.
+Pas besoin de SSH pour l’installation normale sur le firmware testé : l’installateur utilise le mécanisme natif de restauration de configuration LinkPi, préserve les réglages/calibrations Companion existants et fusionne son watchdog dans le cron déjà présent.
 
 Commandes utiles :
 
@@ -67,72 +70,92 @@ Commandes utiles :
 ./scripts/test.sh
 ```
 
-Pour repartir volontairement d’un mapping hardware/calibration vierge :
+> **État alpha :** le logiciel et ses verrous de sécurité sont validés, mais chaque chaîne de production doit encore être testée avec son vrai matériel. Ne pars pas du principe que trois MP4 simultanés + un stream tiennent sur ton boîtier tant que tu ne l’as pas benchmarké.
 
-```bash
-RESET_HARDWARE=1 ./scripts/install.sh <IP_LINKPI>
-```
+## Les six étapes du Guide
 
-## Guide streaming
+1. **Caméras** — confirmer que HDMI et USB/UVC sont réellement présents.
+2. **Vidéo + audio** — lire les canaux et partir sur des valeurs cohérentes.
+3. **Auto Director** — valider RPC, deux sources, deux meters audio, calibration et scènes A/B/SPLIT.
+4. **Enregistrement** — préparer le stockage externe et le MP4.
+5. **Streaming** — générer les valeurs pour YouTube/Twitch/RTMP, SRT et RTP/UDP.
+6. **Preflight** — obtenir PRÊT / INCOMPLET / PROBLÈME selon le workflow choisi.
 
-Pour la première mise en service, Companion **ne modifie pas automatiquement** les réglages de production Push/Stream du LinkPi. Il génère et valide les valeurs exactes à recopier dans l’interface native. Cela rend les essais beaucoup plus sûrs et réversibles.
+L’UI existe en **français, anglais et chinois simplifié**. La préférence reste dans le navigateur. Un lien peut aussi forcer `?lang=fr`, `?lang=en` ou `?lang=zh-CN`.
 
-Assistants disponibles :
+## Streaming sans deviner les champs
 
-- **RTMP / RTMPS** : serveur + clé → URL complète.
-- **SRT** : Caller / Listener / Rendezvous, hôte, port, latence, passphrase et streamid optionnels.
-- **RTP / UDP** : destination unicast ou multicast, port, TTL et activation de l’en-tête RTP.
-- formulaires pratiques **YouTube** et **Twitch**, plus RTMP/RTMPS générique.
+Pour la première mise en service, le Guide **n’écrit pas automatiquement** les réglages Push/Stream de production. Il génère et valide les valeurs à recopier dans l’UI native, ce qui rend les essais plus sûrs et réversibles.
 
-Les secrets restent uniquement dans les champs du navigateur pendant la session. L’API de diagnostic Companion filtre également les champs sensibles et ne renvoie jamais les URLs de push natives.
+- **RTMP / RTMPS** — serveur + clé → URL complète.
+- **SRT** — caller/listener/rendezvous, hôte, port, latence, passphrase et streamid optionnels.
+- **RTP / UDP** — unicast/multicast, port, TTL et en-tête RTP.
+- **YouTube / Twitch** — formulaires ciblés + RTMP/RTMPS générique.
+
+Les secrets restent uniquement dans les champs courants du navigateur. L’API de diagnostic Companion filtre également les valeurs sensibles et ne renvoie jamais les URLs de push natives.
 
 ## Objectif enregistrement
 
-L’objectif de production est : **CAM A + CAM B + PROGRAM enregistrés en MP4 sur un disque USB externe pendant que PROGRAM est streamé**.
+```text
+CAM A ─┐
+CAM B ─┼─► PROGRAM ─► stream live
+       │
+       └─► CAM A + CAM B + PROGRAM → MP4 sur disque USB externe
+```
 
-Companion affiche volontairement cet objectif comme non validé tant que l’ENC1 V3 n’a pas été benchmarké avec la vraie charge Blackmagic + Pocket 3 + micros. Pour un gros disque moderne, NTFS est le choix pratique. Pour de longues captations, le découpage en fragments limite également les dégâts en cas de coupure ou arrêt brutal.
+L’objectif 3×MP4 reste volontairement marqué comme non validé tant qu’il n’a pas été benchmarké avec la charge réelle du LinkPi.
 
 ## Auto Director
 
-L’Encoder C++ natif continue de gérer capture, encodage, enregistrement et streaming. Un petit worker PHP lit la télémétrie native et utilise le Carousel natif pour les cuts ; Developer Mode / EncoderJS reste désactivé.
+L’Encoder LinkPi natif continue de gérer capture, encode, record et stream. Companion lit la télémétrie et utilise le Carousel natif pour les cuts.
 
-Le preset **Naturel** utilise par défaut 900 ms avant acquisition d’un locuteur, 5 s de plan minimum, 2,5 s de période réfractaire, 1 s de chevauchement avant SPLIT, 3 s de maintien du SPLIT et 7 s de silence avant un SPLIT neutre. Les presets **Stable** et **Réactif** existent aussi, et chaque champ reste réglable avec une explication intégrée.
+Le preset **Naturel** démarre à 900 ms d’acquisition, 5 s de plan minimum, 2,5 s de période réfractaire, 1 s de chevauchement avant SPLIT, 3 s de maintien du SPLIT et 7 s de silence avant un SPLIT neutre. **Stable** et **Réactif** sont inclus, avec une aide intégrée pour chaque paramètre.
 
-L’audio programme est volontairement indépendant des cuts vidéo : le design cible garde les deux interlocuteurs dans le mix final en permanence ; l’activité micro sert uniquement à prendre les décisions de réalisation.
+L’audio programme reste indépendant des cuts : l’activité micro décide de l’image, tandis que le mix final peut conserver les deux interlocuteurs en continu.
+
+## Cible testée
+
+- LinkPi ENC1 V3 / SS524V100
+- APP/SDK 5.3.0, SYS 5.3.1 (20260731)
+- RPC natif `/RPC`
+- PHP CLI `/usr/php/bin/php`
+- Companion sur le port `8787`
+
+D’autres firmwares/modèles peuvent fonctionner, mais restent non vérifiés tant qu’un utilisateur ne les a pas testés.
 
 ## Sécurité
 
-- l’Encoder C++ natif reste maître ; Developer Mode / EncoderJS reste désactivé ;
-- démarrage Auto Director en `OFF` ;
-- `DRY_RUN` décide sans modifier la vidéo ;
-- `AUTO` est refusé tant que la readiness n’est pas complète ;
-- les diagnostics LinkPi de Companion sont en lecture seule ;
-- le Guide ne lance jamais tout seul un stream ou un enregistrement ;
-- aucune clé de stream ou credential n’est stockée par Companion ;
-- les états haute fréquence sont écrits dans `/tmp`, pas continuellement sur l’eMMC.
+- Encoder C++ natif toujours maître ; Developer Mode / EncoderJS désactivé.
+- Auto Director démarre en `OFF`.
+- `DRY_RUN` décide sans changer la vidéo.
+- `AUTO` est refusé côté serveur tant que la readiness n’est pas complète.
+- diagnostics Companion en lecture seule ;
+- aucun push/record lancé automatiquement par le Guide ;
+- aucune clé de stream/passphrase persistée ;
+- état haute fréquence sous `/tmp` pour limiter les écritures eMMC.
 
-## Organisation du dépôt
+Le port `8787` n’a pas encore d’authentification applicative. Garde le LinkPi sur un LAN/VLAN de confiance ou derrière un VPN/reverse proxy authentifié. N’expose jamais directement les ports de contrôle/RPC/UI à Internet.
+
+## Dépôt
 
 ```text
-companion/embedded/       runtime PHP + UI Companion installés dans le LinkPi
-companion/reference-node/ implémentation de référence déterministe + tests
-scripts/                     installation, hardening, recovery, statut et validation
-docs/                        architecture, exploitation, design du guide et commissioning
-local-private/               snapshots/historique locaux ; jamais commités
+companion/embedded/       runtime PHP + UI installés sur le LinkPi
+companion/reference-node/ implémentation déterministe + tests
+docs/assets/              logo, screenshots et social preview
+scripts/                  install, hardening, statut, validation
+docs/                     architecture, exploitation, commissioning
 ```
 
-Documents utiles :
+Docs : [Architecture](docs/ARCHITECTURE.md) · [Exploitation](docs/OPERATIONS.md) · [Commissioning matériel](docs/HARDWARE-COMMISSIONING.md) · [Readiness production](docs/PRODUCTION-READINESS-CHECKLIST.md)
 
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
-- [`docs/OPERATIONS.md`](docs/OPERATIONS.md)
-- [`docs/HARDWARE-COMMISSIONING.md`](docs/HARDWARE-COMMISSIONING.md)
-- [`docs/HANDOFF.md`](docs/HANDOFF.md)
-- [`docs/PRODUCTION-READINESS-CHECKLIST.md`](docs/PRODUCTION-READINESS-CHECKLIST.md)
+## Contribuer
 
-## Readiness production
+Les retours de compatibilité matérielle sont particulièrement utiles. Indique le modèle LinkPi, les versions APP/SDK/SYS et un cas reproductible — mais **jamais de clé de stream, mot de passe ou archive de configuration privée**.
 
-Le dépôt est public mais reste en **alpha** tant que les essais réels n’ont pas validé la négociation des caméras, les micros indépendants, la calibration, les layouts A/B/SPLIT, le MixA continu, les enregistrements CAM A + CAM B + PROGRAM, les sorties de streaming utiles, le recovery après mise à jour firmware et un soak test prolongé. Voir la checklist de readiness production.
+Voir [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md) et [SUPPORT.md](SUPPORT.md).
 
-## Note réseau
+Si LinkPi Companion te simplifie réellement la vie, **mets une étoile au dépôt** : les stars permettent de le retrouver plus facilement et aident les autres utilisateurs LinkPi à découvrir les projets associés sur GitHub.
 
-Le port `8787` n’a actuellement pas d’authentification applicative. Garder le LinkPi et Companion sur un LAN/VLAN de confiance et ne jamais exposer directement les ports de contrôle/RPC/UI du LinkPi à Internet.
+## Licence
+
+[MIT](LICENSE). LinkPi Companion est un projet communautaire indépendant, sans affiliation ni approbation officielle de LinkPi.

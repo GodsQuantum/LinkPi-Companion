@@ -124,3 +124,12 @@ test('serves localization and native-page modules', async () => {
     }
   });
 });
+
+test('serves the LinkPi Companion logo asset', async () => {
+  await withServer(fakeRuntime(), async base => {
+    const response = await fetch(`${base}/logo.svg`);
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get('content-type') ?? '', /image\/svg\+xml/);
+    assert.match(await response.text(), /LinkPi Companion/);
+  });
+});
