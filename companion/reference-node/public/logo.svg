@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">LinkPi Companion</title>
+  <desc id="desc">Two camera sources merge into one program output</desc>
+  <defs>
+    <linearGradient id="cyan" x1="96" y1="96" x2="420" y2="416" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#63f2e9"/><stop offset="1" stop-color="#18a7ff"/>
+    </linearGradient>
+    <linearGradient id="program" x1="294" y1="196" x2="424" y2="330" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7cf5ff"/><stop offset=".55" stop-color="#5aa8ff"/><stop offset="1" stop-color="#9d78ff"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect x="24" y="24" width="464" height="464" rx="112" fill="#081018"/>
+  <rect x="25.5" y="25.5" width="461" height="461" rx="110.5" fill="none" stroke="#233343" stroke-width="3"/>
+  <g filter="url(#glow)" fill="none" stroke="url(#cyan)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="86" y="118" width="116" height="82" rx="20"/><rect x="86" y="312" width="116" height="82" rx="20"/>
+    <path d="M202 159H236C275 159 274 225 312 238"/><path d="M202 353H236C275 353 274 287 312 274"/>
+  </g>
+  <g fill="#dffbff" font-family="Inter,Segoe UI,sans-serif" font-size="42" font-weight="800" text-anchor="middle"><text x="144" y="174">A</text><text x="144" y="368">B</text></g>
+  <path d="M300 186C300 169 319 159 333 169L426 237C439 246 439 266 426 275L333 343C319 353 300 343 300 326V186Z" fill="url(#program)" filter="url(#glow)"/>
+  <circle cx="422" cy="110" r="8" fill="#63f2e9"/><circle cx="445" cy="110" r="8" fill="#3bc8ff"/><circle cx="468" cy="110" r="8" fill="#9d78ff"/>
+</svg>

@@ -28,6 +28,9 @@ button:disabled { cursor: not-allowed; opacity: .38; }
 h1, h2, p { margin-top: 0; }
 h1 { margin-bottom: 0; font-size: clamp(30px, 5vw, 52px); letter-spacing: -.055em; line-height: .95; }
 h2 { margin-bottom: 0; font-size: 18px; letter-spacing: -.02em; }
+.brand-block { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.brand-logo { width: 72px; height: 72px; flex: 0 0 auto; border-radius: 18px; filter: drop-shadow(0 10px 24px rgba(24,167,255,.18)); }
+.brand-text { min-width: 0; }
 .top-actions { display: flex; align-items: center; gap: 12px; }
 .status-pill, .mini-badge, .ghost-link {
   border: 1px solid var(--line);
