@@ -11,6 +11,7 @@ const STATIC = new Map([
   ['/stream-builders.js', ['stream-builders.js', 'text/javascript; charset=utf-8']],
   ['/i18n.js', ['i18n.js', 'text/javascript; charset=utf-8']],
   ['/native-pages.js', ['native-pages.js', 'text/javascript; charset=utf-8']],
+  ['/logo.svg', ['logo.svg', 'image/svg+xml']],
   ['/styles.css', ['styles.css', 'text/css; charset=utf-8']],
 ]);
 

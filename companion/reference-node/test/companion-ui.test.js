@@ -99,3 +99,10 @@ test('language can be selected from URL and then persisted locally', async () =>
   assert.match(js, /[?&]lang|\.get\(['"]lang['"]\)/);
   assert.match(js, /LANGUAGE_STORAGE_KEY/);
 });
+
+test('brand uses a dedicated LinkPi Companion logo in the app header', async () => {
+  const { html, css } = await assets();
+  assert.match(html, /<img[^>]+src="\/logo\.svg"[^>]+alt="LinkPi Companion"/);
+  assert.match(html, /class="brand-logo"/);
+  assert.match(css, /\.brand-logo/);
+});
