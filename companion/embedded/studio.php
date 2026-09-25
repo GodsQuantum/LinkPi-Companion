@@ -506,6 +506,10 @@ function studio_set_native_srt(?int $sourceId,?string $url=null,int $defaultLate
     foreach ($config as &$ch) {
         if (!is_array($ch) || !is_int($ch['id']??null) || !is_array($ch['stream2']['srt']??null)) continue;
         $ch['stream2']['srt']['enable']=false;
+        $ch['stream2']['srt']['mode']='listener';
+        $ch['stream2']['srt']['ip']='127.0.0.1';
+        $ch['stream2']['srt']['passwd']='';
+        $ch['stream2']['srt']['streamid']='';
         if ($sourceId!==null && $ch['id']===$sourceId) {
             $target=studio_srt_target((string)$url,$defaultLatency);
             $ch['enable2']=true;
@@ -697,6 +701,7 @@ function studio_disable_network_source(int $slot): array {
     if ($slot<1 || $slot>4) throw new InvalidArgumentException('Network slot must be 1-4');
     $id=$slot+1; $config=studio_native_config();
     foreach ($config as &$ch) if (($ch['id']??-1)===$id && ($ch['type']??'')==='net') {
+        $ch['name']='Net'.$slot;
         $ch['enable']=false; $ch['net']['decodeV']=false; $ch['net']['decodeA']=false; $ch['net']['path']='';
     }
     unset($ch);
