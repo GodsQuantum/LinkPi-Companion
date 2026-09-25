@@ -39,6 +39,9 @@ LinkPi Companion rassemble le workflow sur `http://<IP_LINKPI>:8787` :
 - **Sûr par défaut** — l’Encoder C++ natif reste maître et AUTO reste verrouillé tant que la readiness n’est pas prouvée.
 - **Portable** — le Companion vit sur le LinkPi : le guide part avec le boîtier.
 
+<p align="center"><img src="docs/assets/screenshot-studio.png" width="920" alt="Studio LinkPi Companion, régie native simplifiée"></p>
+<p align="center"><i>Studio transforme les contrôles natifs LinkPi en parcours simple : source → qualité → destination → Stream/Record.</i></p>
+
 <p align="center">
   <img src="docs/assets/screenshot-streaming.png" width="455" alt="Assistant SRT et streaming LinkPi Companion">
   <img src="docs/assets/screenshot-autodirector.png" width="455" alt="Contrôles Auto Director LinkPi Companion">
@@ -83,16 +86,25 @@ Commandes utiles :
 
 L’UI existe en **français, anglais et chinois simplifié**. La préférence reste dans le navigateur. Un lien peut aussi forcer `?lang=fr`, `?lang=en` ou `?lang=zh-CN`.
 
-## Streaming sans deviner les champs
+## Studio : piloter LinkPi nativement sans se perdre dans les menus
 
-Pour la première mise en service, le Guide **n’écrit pas automatiquement** les réglages Push/Stream de production. Il génère et valide les valeurs à recopier dans l’UI native, ce qui rend les essais plus sûrs et réversibles.
+Le **Guide** reste un assistant sûr. Le nouvel onglet **Studio** peut en plus appliquer des actions explicites via les mêmes RPC natifs que l’interface LinkPi.
 
-- **RTMP / RTMPS** — serveur + clé → URL complète.
-- **SRT** — caller/listener/rendezvous, hôte, port, latence, passphrase et streamid optionnels.
-- **RTP / UDP** — unicast/multicast, port, TTL et en-tête RTP.
-- **YouTube / Twitch** — formulaires ciblés + RTMP/RTMPS générique.
+- **Source** — Auto, HDMI, USB/UVC, Program/Mix ou Net1–Net4.
+- **Qualité live** — 4K, 1080p, 720p, 360p et variantes portrait ; 24/25/30/50/60 fps quand la source et le boîtier le permettent.
+- **Master vs live** — le MAIN peut rester un master H.265 de haute qualité tandis que le SUB sert au live avec un débit plus bas.
+- **Providers** — YouTube, Twitch, Restream et Remote OBS.
+- **Transport** — Stream/Stop et Record/Stop directement depuis Companion.
+- **Invité Internet** — soit tirer RTSP/RTMP/SRT/UDP dans Net1–Net4, soit laisser Studio générer une URL SRT entrante via le serveur SLS natif du LinkPi sur UDP 8080.
+- **Master Auto / source max** — sur une caméra UVC, Studio choisit le plus grand mode réellement annoncé au FPS choisi ; en HDMI, il suit le signal d’entrée.
+- **Pairing Auto Director** — choisis deux entrées HDMI/USB/Net comme A/B, prépare les scènes natives et calibre silence/parole depuis Studio.
+- **Auto Director** — OFF / DRY-RUN / AUTO reste protégé par les verrous de readiness.
 
-Les secrets restent uniquement dans les champs courants du navigateur. L’API de diagnostic Companion filtre également les valeurs sensibles et ne renvoie jamais les URLs de push natives.
+La stratégie est adaptée à la destination : YouTube direct peut utiliser RTMPS + HEVC/H.265 ; Twitch direct reste en H.264 sur le chemin RTMP matériel classique ; Restream privilégie SRT + HEVC sur les offres Business/Enterprise si le compte fournit un ingest SRT (la compatibilité SRT caller doit encore être validée contre ton vrai endpoint Restream sur ce firmware ENC1 V3) ; Remote OBS utilise SRT + H.265 par défaut avec H.264 en fallback ; en mode Direct, le LinkPi écoute en SRT et génère l’URL caller à coller dans l’OBS distant, chemin validé sur ENC1 V3.
+
+Les credentials peuvent être conservés localement sur le LinkPi dans `providers.json` privé (`0600`). Les API GET ne renvoient que configuré/non configuré, jamais les stream keys, passphrases SRT ou URLs privées publish/read.
+
+Un lien VDO.Ninja est WebRTC et n’est pas directement décodable par ce firmware LinkPi. Utilise un bridge WebRTC/WHIP tel que MediaMTX et publie H.264 + AAC vers l’URL SRT entrante générée par Studio, ou expose l’invité en RTSP/SRT et utilise le mode pull. Le SLS embarqué vise le MPEG-TS H.264 ; pour un invité HEVC/chiffré, préfère un relay externe.
 
 ## Objectif enregistrement
 
@@ -103,7 +115,9 @@ CAM B ─┼─► PROGRAM ─► stream live
        └─► CAM A + CAM B + PROGRAM → MP4 sur disque USB externe
 ```
 
-L’objectif 3×MP4 reste volontairement marqué comme non validé tant qu’il n’a pas été benchmarké avec la charge réelle du LinkPi.
+Les fichiers natifs sont écrits sous `/root/usb/` et visibles via `/files/`. L’objectif 3×MP4 reste volontairement marqué comme non validé tant qu’il n’a pas été benchmarké avec la charge réelle du LinkPi.
+
+> **Note USB/UVC :** la 4K reste disponible, mais sur un ENC1 V3 considère 1080p30 comme baseline de stabilité tant que la caméra et le câble n’ont pas passé un soak test 4K prolongé.
 
 ## Auto Director
 

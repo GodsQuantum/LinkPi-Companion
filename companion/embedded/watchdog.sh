@@ -17,6 +17,17 @@ if [ "$(cat "$RUNTIME_VERSION_FILE" 2>/dev/null)" != "$VERSION" ]; then
   printf '%s\n' "$VERSION" > "$RUNTIME_VERSION_FILE"
 fi
 
+
+# Keep the camera-side USB root hub and DJI Pocket UVC devices fully awake.
+# The Wi-Fi adapter lives on another USB root, so this does not alter Wi-Fi PM.
+[ -w /sys/bus/usb/devices/usb1/power/control ] && echo on > /sys/bus/usb/devices/usb1/power/control 2>/dev/null || true
+for DEV in /sys/bus/usb/devices/*; do
+  [ -r "$DEV/idVendor" ] && [ -r "$DEV/idProduct" ] || continue
+  [ "$(cat "$DEV/idVendor" 2>/dev/null)" = "2ca3" ] || continue
+  [ "$(cat "$DEV/idProduct" 2>/dev/null)" = "0023" ] || continue
+  [ -w "$DEV/power/control" ] && echo on > "$DEV/power/control" 2>/dev/null || true
+done
+
 alive() {
   PIDFILE="$1"
   MARKER="$2"
