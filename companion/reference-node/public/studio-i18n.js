@@ -116,6 +116,11 @@ const translations = Object.freeze({
   'Scènes préparées · vérifie Carousel': ['Scenes prepared · check Carousel', '场景已准备 · 请检查 Carousel'],
   'Mesure du silence…': ['Measuring silence…', '正在测量静音…'],
   'Mesure de la parole…': ['Measuring speech…', '正在测量讲话…'],
+  'Relay Browser Source HTTPS': ['Relay Browser Source HTTPS', '中继浏览器源 HTTPS'],
+  'Browser Source relay non configurée.': ['Relay Browser Source not configured.', '尚未配置中继浏览器源。'],
+  'Copier Browser Source': ['Copy Browser Source', '复制浏览器源'],
+  'SRT read URL non configurée · utilise Browser Source.': ['SRT read URL not configured · use Browser Source.', '未配置 SRT 读取地址 · 请使用浏览器源。'],
+  'Lien OBS enregistré': ['Saved OBS link', '已保存的 OBS 链接'],
 });
 
 const sources = new WeakMap();

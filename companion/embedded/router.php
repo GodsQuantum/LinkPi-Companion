@@ -91,6 +91,7 @@ try {
         $b=json_body(); send_json(200, studio_apply_layout((int)($b['layoutId']??-1), is_array($b['audio']??null)?$b['audio']:[])); return;
     }
     if ($method === 'POST' && $path === '/api/studio/remoteobs/preview') { send_json(200, studio_remote_obs_preview(json_body())); return; }
+    if ($method === 'POST' && $path === '/api/studio/remoteobs/link') { send_json(200, studio_remote_obs_saved_link()); return; }
     if ($method === 'POST' && $path === '/api/studio/autodirector/prepare') { send_json(200, studio_prepare_autodirector(json_body())); return; }
     if ($method === 'POST' && $path === '/api/studio/autodirector/calibrate') { send_json(200, studio_calibrate(json_body())); return; }
     if (preg_match('#^/api/studio/provider/([a-z0-9_-]+)$#',$path,$m) && $method === 'PUT') {
@@ -103,7 +104,7 @@ try {
         send_json(200, studio_disable_network_source((int)$m[1])); return;
     }
     if ($method === 'GET' && $path === '/api/config/public') {
-        $host = $_SERVER['HTTP_HOST'] ?? '192.168.1.217:8787';
+        $host = $_SERVER['HTTP_HOST'] ?? '192.168.1.100:8787';
         $baseHost = explode(':', $host)[0];
         send_json(200, ['nativeUiUrl' => 'http://' . $baseHost . '/', 'pollMs' => 250]); return;
     }

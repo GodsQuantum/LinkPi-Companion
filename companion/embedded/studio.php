@@ -43,7 +43,7 @@ function studio_provider_defaults(): array {
         'remoteobs'=>[
             'label'=>'Remote OBS','mode'=>'srt','remoteMode'=>'direct',
             'remoteHost'=>'','remotePort'=>9001,'latency'=>120,'passphrase'=>'',
-            'srtUrl'=>'','obsUrl'=>'','relayPublishUrl'=>'','relayReadUrl'=>'',
+            'srtUrl'=>'','obsUrl'=>'','relayPublishUrl'=>'','relayReadUrl'=>'','relayWebUrl'=>'',
             'enabled'=>false,'codec'=>'h265',
             'note'=>'SRT contribution feed for another OBS. Direct mode needs one UDP port; relay mode avoids inbound NAT.',
         ],
@@ -123,6 +123,7 @@ function studio_public_providers(): array {
         'passphraseConfigured'=>(string)($p['passphrase']??'')!=='',
         'relayPublishConfigured'=>(string)($p['relayPublishUrl']??'')!=='',
         'relayReadConfigured'=>(string)($p['relayReadUrl']??'')!=='',
+        'relayWebConfigured'=>(string)($p['relayWebUrl']??'')!=='',
     ];
     return $out;
 }
@@ -166,6 +167,11 @@ function studio_save_provider(string $name,array $body): array {
             $url=trim((string)$body[$field]);
             if ($url!=='' && !preg_match('#^srt://#i',$url)) throw new InvalidArgumentException($field.' must start with srt://');
             $all[$name][$field]=$url;
+        }
+        if (array_key_exists('relayWebUrl',$body)) {
+            $url=trim((string)$body['relayWebUrl']);
+            if ($url!=='' && !preg_match('#^https://#i',$url)) throw new InvalidArgumentException('relayWebUrl must start with https://');
+            $all[$name]['relayWebUrl']=$url;
         }
     }
     if (isset($body['enabled'])) $all[$name]['enabled']=$body['enabled']===true;
@@ -396,9 +402,12 @@ function studio_srt_query(array $params): string {
 function studio_remote_obs_urls(array $p): array {
     $mode=$p['remoteMode']??'direct';
     if ($mode==='relay') {
-        $publish=trim((string)($p['relayPublishUrl']??'')); $read=trim((string)($p['relayReadUrl']??''));
-        if ($publish==='' || $read==='') throw new RuntimeException('Relay publish/read SRT URLs are required');
-        return ['publish'=>$publish,'read'=>$read];
+        $publish=trim((string)($p['relayPublishUrl']??''));
+        $read=trim((string)($p['relayReadUrl']??''));
+        $web=trim((string)($p['relayWebUrl']??''));
+        if ($publish==='') throw new RuntimeException('Relay publish SRT URL is required');
+        if ($read==='' && $web==='') throw new RuntimeException('Relay needs an SRT read URL or an HTTPS Browser Source URL');
+        return ['publish'=>$publish,'read'=>$read,'web'=>$web];
     }
     $host=trim((string)($p['remoteHost']??'')); $port=(int)($p['remotePort']??0);
     if ($host==='' || $port<1 || $port>65535) throw new RuntimeException('Remote OBS host/port incomplete');
@@ -416,8 +425,15 @@ function studio_remote_obs_preview(array $body): array {
     $p=studio_provider_defaults()['remoteobs'];
     foreach ($body as $k=>$v) if (array_key_exists($k,$p)) $p[$k]=$v;
     $urls=studio_remote_obs_urls($p);
-    return ['publishUrl'=>$urls['publish'],'obsUrl'=>$urls['read'],
+    return ['publishUrl'=>$urls['publish'],'obsUrl'=>$urls['read']??'','browserUrl'=>$urls['web']??'',
         'obsInputFormat'=>'mpegts','codec'=>$body['codec']??'h265'];
+}
+function studio_remote_obs_saved_link(): array {
+    $p=studio_load_providers()['remoteobs'] ?? null;
+    if (!is_array($p)) throw new RuntimeException('Remote OBS provider unavailable');
+    $urls=studio_remote_obs_urls($p);
+    return ['obsUrl'=>$urls['read']??'','browserUrl'=>$urls['web']??'',
+        'obsInputFormat'=>'mpegts','codec'=>$p['codec']??'h265'];
 }
 function studio_provider_path(array $p): string {
     if (($p['label']??'')==='Remote OBS') return studio_remote_obs_urls($p)['publish'];
@@ -499,8 +515,11 @@ function studio_set_native_srt(?int $sourceId,?string $url=null,int $defaultLate
     }
     unset($ch);
     if (!$found) throw new RuntimeException('Selected source has no native SRT output');
-    linkpi_rpc_call('enc.update',[json_encode($config,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT)]);
-    usleep(250000);
+    // Firmware >= 3.6 uses /conf/updateDefaultConf for stream.php:
+    // persist config.json then reload the encoder. The lightweight hot-update
+    // path does not reliably start/stop native SRT callers on 5.3.x.
+    studio_native_func('/conf/updateDefaultConf',$config);
+    usleep(900000);
     return studio_native_srt_state();
 }
 function studio_stream_state(): array {
