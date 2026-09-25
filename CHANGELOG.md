@@ -10,7 +10,10 @@ The project follows semantic versioning where practical. Pre-1.0 releases may ch
 - Native A/B/SPLIT scene validation.
 - Triple MP4 + program-stream load benchmark.
 
-## [0.4.0-alpha.1] - 2026-09-25
+## [0.4.0-alpha.2] - 2026-09-25
+
+- Remote OBS Direct now uses the validated ENC1 V3 SRT-listener / OBS-caller direction, with live transport and 1316-byte MPEG-TS packets.
+- Restream SRT/HEVC remains available as the bandwidth-efficient path but requires validation against the account-specific Restream caller endpoint on this firmware.
 
 - Added **Studio**, a simple native control surface for source selection, live quality, recording quality, Stream/Stop and Record/Stop.
 - Added MAIN/master vs SUB/live profiles with H.264/H.265 and destination-aware codec selection.

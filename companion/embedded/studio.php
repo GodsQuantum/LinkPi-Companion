@@ -413,11 +413,17 @@ function studio_remote_obs_urls(array $p): array {
     if ($host==='' || $port<1 || $port>65535) throw new RuntimeException('Remote OBS host/port incomplete');
     $lat=max(20,min(8000,(int)($p['latency']??120))); $pass=(string)($p['passphrase']??'');
     $latUs=$lat*1000;
-    $q=['mode'=>'caller','latency'=>$latUs]; $oq=['mode'=>'listener','latency'=>$latUs];
-    if ($pass!=='') { $q['passphrase']=$pass; $q['pbkeylen']=16; $oq['passphrase']=$pass; $oq['pbkeylen']=16; }
+    // ENC1 V3 firmware 5.3.x is reliable as an SRT listener; caller mode is
+    // kept for provider/relay endpoints but is not used by Direct Remote OBS.
+    $listen=['mode'=>'listener','latency'=>$latUs];
+    $obs=['mode'=>'caller','latency'=>$latUs,'transtype'=>'live','pkt_size'=>1316];
+    if ($pass!=='') {
+        $listen['passphrase']=$pass; $listen['pbkeylen']=16;
+        $obs['passphrase']=$pass; $obs['pbkeylen']=16;
+    }
     return [
-        'publish'=>'srt://'.$host.':'.$port.'?'.studio_srt_query($q),
-        'read'=>'srt://0.0.0.0:'.$port.'?'.studio_srt_query($oq),
+        'publish'=>'srt://0.0.0.0:'.$port.'?'.studio_srt_query($listen),
+        'read'=>'srt://'.$host.':'.$port.'?'.studio_srt_query($obs),
     ];
 }
 
@@ -729,6 +735,13 @@ function studio_disable_network_source(int $slot): array {
     foreach ($config as &$ch) if (($ch['id']??-1)===$id && ($ch['type']??'')==='net') {
         $ch['name']='Net'.$slot;
         $ch['enable']=false; $ch['net']['decodeV']=false; $ch['net']['decodeA']=false; $ch['net']['path']='';
+        foreach (['stream','stream2'] as $streamKey) if (is_array($ch[$streamKey]['srt']??null)) {
+            $ch[$streamKey]['srt']['enable']=false;
+            $ch[$streamKey]['srt']['mode']='listener';
+            $ch[$streamKey]['srt']['ip']='127.0.0.1';
+            $ch[$streamKey]['srt']['passwd']='';
+            $ch[$streamKey]['srt']['streamid']='';
+        }
     }
     unset($ch);
     linkpi_rpc_call('enc.update',[json_encode($config,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT)]);

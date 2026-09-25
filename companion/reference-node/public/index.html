@@ -222,9 +222,9 @@
           <article class="card">
             <div class="section-head"><div><p class="label">REMOTE OBS</p><h2>Envoyer à un ami</h2></div><span class="mini-badge">SRT</span></div>
             <div class="field-grid">
-              <label><span>Mode</span><select id="studioObsMode"><option value="direct">Direct · port UDP chez l’ami</option><option value="relay">Relay · zéro port entrant</option></select></label>
+              <label><span>Mode</span><select id="studioObsMode"><option value="direct">Direct · OBS se connecte au LinkPi</option><option value="relay">Relay · zéro port entrant</option></select></label>
               <label><span>Codec</span><select id="studioObsCodec"><option value="h265" selected>H.265 · recommandé</option><option value="h264">H.264 · compatibilité</option></select></label>
-              <label><span>IP / DNS de l’ami</span><input id="studioObsHost" placeholder="friend.example.net"></label>
+              <label><span>IP / DNS public du LinkPi</span><input id="studioObsHost" placeholder="friend.example.net"></label>
               <label><span>Port UDP</span><input id="studioObsPort" type="number" value="9001" min="1" max="65535"></label>
               <label><span>Latence SRT</span><div class="input-with-unit"><input id="studioObsLatency" type="number" value="120" min="20" max="8000"><span>ms</span></div></label>
               <label><span>Passphrase</span><input id="studioObsPassphrase" type="password" autocomplete="off" placeholder="10–79 caractères"></label>
@@ -234,7 +234,7 @@
             <div class="action-row"><button id="studioObsPreview" class="secondary-btn">Générer le lien OBS</button><button id="studioObsLoadSaved" class="secondary-btn">Lien OBS enregistré</button><button id="studioObsSave" class="secondary-btn">Sauvegarder Remote OBS</button></div>
             <div class="generated-box"><code id="studioObsOutput">Renseigne les paramètres Remote OBS.</code><button id="studioObsCopy" class="copy-btn" disabled>Copier</button></div>
             <div class="generated-box"><code id="studioWebOutput">Browser Source relay non configurée.</code><button id="studioWebCopy" class="copy-btn" disabled>Copier Browser Source</button></div>
-                        <p class="muted">Dans OBS : Source média → Input = lien généré → Input Format = <code>mpegts</code>. Pour le direct, ton ami ouvre seulement le port UDP choisi.</p>
+                        <p class="muted">Dans OBS : Source média → Input = lien généré → Input Format = <code>mpegts</code>. Pour le direct, redirige le port UDP choisi vers le LinkPi ; ton ami colle simplement le lien généré dans OBS.</p>
           </article>
 
           <article class="card">

@@ -41,12 +41,16 @@ test('Studio push state never returns destination paths or URLs', () => {
   assert.match(stateBlock, /studio_stream_state\(\)/);
 });
 
-test('Remote OBS converts UI milliseconds to SRT microseconds', () => {
+test('Remote OBS direct uses validated LinkPi-listener / OBS-caller SRT direction', () => {
   const start = studioPhp.indexOf('function studio_remote_obs_urls');
   const end = studioPhp.indexOf('function studio_remote_obs_preview', start);
   const block = studioPhp.slice(start, end);
   assert.ok(block.includes('$latUs=$lat*1000'));
-  assert.ok(block.includes("'latency'=>$latUs"));
+  assert.match(block, /'mode'=>'listener'/);
+  assert.match(block, /'mode'=>'caller'/);
+  assert.match(block, /transtype.*live/);
+  assert.match(block, /pkt_size.*1316/);
+  assert.match(block, /0\.0\.0\.0/);
 });
 
 test('SRT providers use native stream2.srt instead of generic push paths', () => {
@@ -126,4 +130,6 @@ test('stopping native SRT and network inputs scrubs temporary destinations', () 
   const netBlock = studioPhp.slice(netStart, netEnd);
   assert.match(netBlock, /\['name'\]='Net'\.\$slot/);
   assert.match(netBlock, /\['path'\]=''/);
+  assert.match(netBlock, /foreach \(\['stream','stream2'\]/);
+  assert.match(netBlock, /\['srt'\]\['enable'\]=false/);
 });
