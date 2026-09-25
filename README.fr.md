@@ -100,7 +100,7 @@ Le **Guide** reste un assistant sûr. Le nouvel onglet **Studio** peut en plus a
 - **Pairing Auto Director** — choisis deux entrées HDMI/USB/Net comme A/B, prépare les scènes natives et calibre silence/parole depuis Studio.
 - **Auto Director** — OFF / DRY-RUN / AUTO reste protégé par les verrous de readiness.
 
-La stratégie est adaptée à la destination : YouTube direct peut utiliser RTMPS + HEVC/H.265 ; Twitch direct reste en H.264 sur le chemin RTMP matériel classique ; Restream privilégie SRT + HEVC si le compte fournit un ingest SRT (la compatibilité SRT caller doit encore être validée contre ton vrai endpoint Restream sur ce firmware ENC1 V3) ; Remote OBS utilise SRT + H.265 par défaut avec H.264 en fallback ; en mode Direct, le LinkPi écoute en SRT et génère l’URL caller à coller dans l’OBS distant, chemin validé sur ENC1 V3.
+La stratégie est adaptée à la destination : YouTube direct peut utiliser RTMPS + HEVC/H.265 ; Twitch direct reste en H.264 sur le chemin RTMP matériel classique ; Restream privilégie SRT + HEVC sur les offres Business/Enterprise si le compte fournit un ingest SRT (la compatibilité SRT caller doit encore être validée contre ton vrai endpoint Restream sur ce firmware ENC1 V3) ; Remote OBS utilise SRT + H.265 par défaut avec H.264 en fallback ; en mode Direct, le LinkPi écoute en SRT et génère l’URL caller à coller dans l’OBS distant, chemin validé sur ENC1 V3.
 
 Les credentials peuvent être conservés localement sur le LinkPi dans `providers.json` privé (`0600`). Les API GET ne renvoient que configuré/non configuré, jamais les stream keys, passphrases SRT ou URLs privées publish/read.
 

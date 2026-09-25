@@ -100,7 +100,7 @@ http://<LINKPI_IP>:8787
 - **Auto Director A/B 配对** — 可将任意两个 HDMI/USB/Net 输入设为 A/B，并直接在 Studio 中准备原生场景与静音/讲话校准。
 - **Auto Director** — OFF / DRY-RUN / AUTO 仍受 readiness 安全条件保护。
 
-平台策略会根据目的地自动调整：YouTube 直推可使用 RTMPS + HEVC/H.265；Twitch 普通硬件 RTMP 使用 H.264；Restream 在账户提供 SRT ingest 时优先 SRT + HEVC；Remote OBS 默认使用 SRT + H.265，并提供 H.264 兼容模式；Direct 模式下 LinkPi 作为已验证的 SRT listener，并生成供远端 OBS 使用的 caller URL。
+平台策略会根据目的地自动调整：YouTube 直推可使用 RTMPS + HEVC/H.265；Twitch 普通硬件 RTMP 使用 H.264；Restream 在 Business/Enterprise 套餐并提供 SRT ingest 时优先 SRT + HEVC；Remote OBS 默认使用 SRT + H.265，并提供 H.264 兼容模式；Direct 模式下 LinkPi 作为已验证的 SRT listener，并生成供远端 OBS 使用的 caller URL。
 
 平台凭据可以保存在 LinkPi 本机私有 `providers.json` 中（权限 `0600`）。GET API 只返回“已配置/未配置”，不会返回 stream key、SRT passphrase 或私有 publish/read URL。
 

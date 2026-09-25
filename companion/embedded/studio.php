@@ -423,7 +423,7 @@ function studio_remote_obs_urls(array $p): array {
         $obs['passphrase']=$pass; $obs['pbkeylen']=16;
     }
     return [
-        'publish'=>'srt://0.0.0.0:'.$port.'?'.studio_srt_query($listen),
+        'publish'=>'srt://127.0.0.1:'.$port.'?'.studio_srt_query($listen),
         'read'=>'srt://'.$host.':'.$port.'?'.studio_srt_query($obs),
     ];
 }
