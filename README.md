@@ -31,6 +31,7 @@ A LinkPi can do a lot. The hard part is remembering **where everything lives**, 
 
 LinkPi Companion puts that workflow on one page at `http://<LINKPI_IP>:8787`:
 
+- **Studio** — a simple OBS-like surface for native LinkPi Stream/Stop, Record/Stop, source, quality, providers and Auto Director.
 - **Guided setup** — cameras → video/audio → Auto Director → recording → streaming → preflight.
 - **Direct native links** — Input, Encode, Stream, Push, Record, Storage, Carousel and Mix open the exact LinkPi page you need.
 - **Streaming helpers** — build and validate RTMP/RTMPS, SRT and RTP/UDP values without storing stream keys.
@@ -38,6 +39,9 @@ LinkPi Companion puts that workflow on one page at `http://<LINKPI_IP>:8787`:
 - **Auto Director** — audio-driven CAM A / CAM B / SPLIT decisions with minimum-shot, refractory and overlap protection.
 - **Safe by default** — native C++ Encoder stays in charge; AUTO remains locked until readiness is proven.
 - **Portable** — the Companion lives on the LinkPi, so the guide travels with the box.
+
+<p align="center"><img src="docs/assets/screenshot-studio.png" width="920" alt="LinkPi Companion Studio simple native control room"></p>
+<p align="center"><i>Studio turns native LinkPi controls into a simple source → quality → destination → Stream/Record workflow.</i></p>
 
 <p align="center">
   <img src="docs/assets/screenshot-streaming.png" width="455" alt="LinkPi Companion SRT and streaming assistant">
@@ -83,18 +87,25 @@ Useful commands:
 
 The UI is available in **English, French and Simplified Chinese**, with the choice stored only in the browser. You can also link directly with `?lang=en`, `?lang=fr` or `?lang=zh-CN`.
 
-## Streaming without field-name guesswork
+## Studio: native LinkPi control without the menu maze
 
-The helper does not push production settings into the LinkPi automatically yet. It gives you validated values to paste into the native UI, which keeps first commissioning reversible.
+The **Guide** remains a safe assistant. The new **Studio** view can also apply explicit actions through the same native LinkPi RPCs used by the firmware UI.
 
-Supported helpers:
+- **Source** — Auto, HDMI, USB/UVC, Program/Mix or Net1–Net4.
+- **Live quality** — 4K, 1080p, 720p, 360p and portrait variants; 24/25/30/50/60 fps where the source/device can support them.
+- **Master vs live** — MAIN can stay a high-quality H.265 recording master while SUB carries a lower-bandwidth live stream.
+- **Providers** — YouTube, Twitch, Restream and Remote OBS.
+- **Transport controls** — Start/Stop Stream and Start/Stop Record from Companion.
+- **Internet guest** — configure LinkPi Net1–Net4 with RTSP/RTMP/SRT/UDP inputs.
+- **Auto master capture** — on UVC cameras, `Auto / source max` selects the highest camera mode actually advertised at the chosen FPS; HDMI follows its input signal.
+- **Auto Director pairing** — choose any two HDMI/USB/Net inputs as A/B, prepare the native scenes and calibrate silence/speech from Studio.
+- **Auto Director** — OFF / DRY-RUN / AUTO remains safety-gated.
 
-- **RTMP / RTMPS** — server + stream key → complete push URL.
-- **SRT** — caller/listener/rendezvous, host, port, latency, optional passphrase and streamid.
-- **RTP / UDP** — unicast/multicast destination, port, TTL and RTP header toggle.
-- **YouTube / Twitch** — focused forms plus generic RTMP/RTMPS.
+Provider strategy is destination-aware: YouTube direct can use RTMPS + HEVC/H.265; Twitch direct uses H.264 for the ordinary hardware RTMP path; Restream prefers SRT + HEVC when the account provides SRT ingest; Remote OBS uses SRT + H.265 by default with H.264 fallback.
 
-Secrets stay in the current browser fields only. Companion's diagnostic API also removes credential-shaped values and never returns native push URLs.
+Provider credentials may be stored locally on the LinkPi in Companion's private `providers.json` (mode `0600`). GET APIs expose only configured/not-configured flags, never stream keys, SRT passphrases or private publish/read URLs.
+
+A VDO.Ninja browser URL is WebRTC and cannot be decoded directly by this LinkPi firmware. Use a WebRTC/WHIP bridge such as MediaMTX, expose the guest as SRT or RTSP, then add that URL to Net1–Net4.
 
 ## Recording target
 
@@ -107,7 +118,9 @@ CAM B ─┼─► PROGRAM ─► live stream
        └─► CAM A + CAM B + PROGRAM → MP4 on external USB storage
 ```
 
-For long recordings, a modern external drive is recommended. The UI deliberately marks the three-recording target as unvalidated until it has been benchmarked on the actual LinkPi workload.
+For long recordings, a modern external drive is recommended. Native recordings are written under `/root/usb/` and exposed by the LinkPi file browser under `/files/`. The UI deliberately marks the three-recording target as unvalidated until it has been benchmarked on the actual LinkPi workload.
+
+> **USB/UVC note:** 4K remains available, but on an ENC1 V3 USB link treat 1080p30 as the stability baseline until your camera/cable combination passes a sustained 4K soak test.
 
 ## Auto Director
 

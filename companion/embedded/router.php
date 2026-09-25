@@ -1,6 +1,7 @@
 <?php
 require __DIR__ . '/lib.php';
 require __DIR__ . '/companion.php';
+require __DIR__ . '/studio.php';
 
 define('AD_HARDWARE', AD_BASE . '/hardware.json');
 define('AD_PUBLIC', AD_BASE . '/public');
@@ -77,6 +78,30 @@ try {
     if ($method === 'GET' && $path === '/api/companion/channels') { send_json(200, companion_channels()); return; }
     if ($method === 'GET' && $path === '/api/companion/recording') { send_json(200, companion_recording()); return; }
     if ($method === 'GET' && $path === '/api/companion/streaming') { send_json(200, companion_streaming()); return; }
+    if ($method === 'GET' && $path === '/api/studio/state') { send_json(200, studio_state()); return; }
+    if ($method === 'PUT' && $path === '/api/studio/config') { send_json(200, studio_save_config(json_body())); return; }
+    if ($method === 'POST' && $path === '/api/studio/stream/start') { send_json(200, studio_start_stream(json_body())); return; }
+    if ($method === 'POST' && $path === '/api/studio/stream/stop') { send_json(200, studio_stop_stream()); return; }
+    if ($method === 'POST' && $path === '/api/studio/record/start') { send_json(200, studio_start_record(json_body())); return; }
+    if ($method === 'POST' && $path === '/api/studio/record/stop') { send_json(200, studio_stop_record()); return; }
+    if ($method === 'POST' && $path === '/api/studio/storage/mount') {
+        $b=json_body(); send_json(200, studio_mount_storage((string)($b['device']??''))); return;
+    }
+    if ($method === 'POST' && $path === '/api/studio/layout') {
+        $b=json_body(); send_json(200, studio_apply_layout((int)($b['layoutId']??-1), is_array($b['audio']??null)?$b['audio']:[])); return;
+    }
+    if ($method === 'POST' && $path === '/api/studio/remoteobs/preview') { send_json(200, studio_remote_obs_preview(json_body())); return; }
+    if ($method === 'POST' && $path === '/api/studio/autodirector/prepare') { send_json(200, studio_prepare_autodirector(json_body())); return; }
+    if ($method === 'POST' && $path === '/api/studio/autodirector/calibrate') { send_json(200, studio_calibrate(json_body())); return; }
+    if (preg_match('#^/api/studio/provider/([a-z0-9_-]+)$#',$path,$m) && $method === 'PUT') {
+        send_json(200, studio_save_provider($m[1],json_body())); return;
+    }
+    if (preg_match('#^/api/studio/network/([1-4])$#',$path,$m) && $method === 'PUT') {
+        $b=json_body(); $b['slot']=(int)$m[1]; send_json(200, studio_set_network_source($b)); return;
+    }
+    if (preg_match('#^/api/studio/network/([1-4])$#',$path,$m) && $method === 'DELETE') {
+        send_json(200, studio_disable_network_source((int)$m[1])); return;
+    }
     if ($method === 'GET' && $path === '/api/config/public') {
         $host = $_SERVER['HTTP_HOST'] ?? '192.168.1.217:8787';
         $baseHost = explode(':', $host)[0];
@@ -119,6 +144,8 @@ try {
     $static = [
         '/' => ['index.html', 'text/html; charset=utf-8'],
         '/app.js' => ['app.js', 'text/javascript; charset=utf-8'],
+        '/studio.js' => ['studio.js', 'text/javascript; charset=utf-8'],
+        '/studio-i18n.js' => ['studio-i18n.js', 'text/javascript; charset=utf-8'],
         '/stream-builders.js' => ['stream-builders.js', 'text/javascript; charset=utf-8'],
         '/i18n.js' => ['i18n.js', 'text/javascript; charset=utf-8'],
         '/native-pages.js' => ['native-pages.js', 'text/javascript; charset=utf-8'],

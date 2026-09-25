@@ -3,9 +3,21 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 EMBEDDED="$ROOT/companion/embedded"
-TARGET="${1:-192.168.1.217}"
+TARGET="${1:-}"
+if [[ -z "$TARGET" ]]; then
+  if [[ -n "${LINKPI_URL:-}" ]]; then
+    _host="${LINKPI_URL#*://}"
+    _host="${_host%%/*}"
+    TARGET="${_host%%:*}"
+  else
+    TARGET="192.168.1.217"
+  fi
+fi
 BASE_URL="${LINKPI_URL:-http://$TARGET}"
 UI_PORT="8787"
+UI_HOST="${BASE_URL#*://}"
+UI_HOST="${UI_HOST%%/*}"
+UI_HOST="${UI_HOST%%:*}"
 RESET_HARDWARE="${RESET_HARDWARE:-0}"
 
 need() {
@@ -43,9 +55,11 @@ fetch_optional() {
 fetch_optional config/auto/root.cron "$BACKUP/root.cron" || true
 fetch_optional config/autodirector/hardware.json "$BACKUP/hardware.json" || true
 fetch_optional config/autodirector/settings.json "$BACKUP/settings.json" || true
+fetch_optional config/autodirector/studio.json "$BACKUP/studio.json" || true
+fetch_optional config/autodirector/providers.json "$BACKUP/providers.json" || true
 fetch_optional config/version.json "$BACKUP/version.json" || true
 
-for name in lib.php companion.php worker.php router.php test.php watchdog.sh VERSION; do
+for name in lib.php companion.php studio.php worker.php router.php test.php watchdog.sh VERSION; do
   cp "$EMBEDDED/$name" "$STAGE/autodirector/$name"
 done
 cp "$EMBEDDED/public/"* "$STAGE/autodirector/public/"
@@ -61,6 +75,14 @@ fi
 if [[ -s "$BACKUP/settings.json" ]]; then
   cp "$BACKUP/settings.json" "$STAGE/autodirector/settings.json"
   echo "Preserving existing editorial settings."
+fi
+if [[ -s "$BACKUP/studio.json" ]]; then
+  cp "$BACKUP/studio.json" "$STAGE/autodirector/studio.json"
+  echo "Preserving existing Studio settings."
+fi
+if [[ -s "$BACKUP/providers.json" ]]; then
+  cp "$BACKUP/providers.json" "$STAGE/autodirector/providers.json"
+  echo "Preserving existing provider credentials."
 fi
 
 CRON="$STAGE/auto/root.cron"
@@ -98,7 +120,7 @@ if data.get('isSuccess') is not True:
     raise SystemExit('LinkPi rejected the deployment package')
 PY
 
-UI_URL="http://$TARGET:$UI_PORT"
+UI_URL="http://$UI_HOST:$UI_PORT"
 echo "Waiting for LinkPi Companion at $UI_URL ..."
 for _ in $(seq 1 24); do
   if STATE="$(curl -fsS --connect-timeout 2 --max-time 4 "$UI_URL/api/state" 2>/dev/null)"; then

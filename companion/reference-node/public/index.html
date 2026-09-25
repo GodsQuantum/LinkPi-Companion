@@ -27,6 +27,7 @@
 
     <nav class="companion-nav" aria-label="Navigation LinkPi Companion">
       <button class="nav-btn active" data-nav-target="guide">Guide</button>
+      <button class="nav-btn" data-nav-target="studio">Studio</button>
       <button class="nav-btn" data-nav-target="director">Auto Director</button>
       <button class="nav-btn" data-nav-target="status">État</button>
       <a id="nativeUi" class="nav-btn nav-link" data-native-page="dashboard" href="#" target="_blank" rel="noreferrer">UI LinkPi ↗</a>
@@ -158,6 +159,133 @@
         </div>
       </section>
 
+
+      <section data-view="studio" class="view-panel">
+        <section class="view-heading card studio-hero">
+          <div><p class="label">RÉGIE SIMPLE</p><h2>Studio</h2><p class="muted">Une façade simple sur le moteur natif LinkPi : source, qualité, stream, record et Auto Director.</p></div>
+          <div class="studio-live-badges"><span id="studioStreamBadge" class="status-pill status-warn">STREAM ARRÊTÉ</span><span id="studioRecordBadge" class="status-pill status-warn">REC ARRÊTÉ</span></div>
+        </section>
+
+        <section class="card">
+          <div class="section-head"><div><p class="label">1 · SOURCE</p><h2>Ce que je diffuse</h2></div><span id="studioInputHint" class="mini-badge">AUTO</span></div>
+          <div class="field-grid">
+            <label><span>Source vidéo</span><select id="studioSource"><option value="AUTO">Auto · une caméra = direct / plusieurs = Program</option><option value="PROGRAM">Program / Mix</option><option value="HDMI">HDMI</option><option value="USB">USB / UVC</option><option value="NET1">Net1</option><option value="NET2">Net2</option><option value="NET3">Net3</option><option value="NET4">Net4</option></select></label>
+            <label><span>Layout Program</span><div class="inline-controls"><select id="studioLayout"><option value="">Auto selon les sources</option></select><button id="studioApplyLayout" class="secondary-btn" type="button">Appliquer</button></div></label>
+            <label><span>Audio du Program</span><div class="studio-check-row"><label><input id="studioAudioHdmi" type="checkbox" checked> HDMI</label><label><input id="studioAudioUsb" type="checkbox" checked> USB</label><label><input id="studioAudioNet1" type="checkbox"> Net1</label><label><input id="studioAudioNet2" type="checkbox"> Net2</label><label><input id="studioAudioNet3" type="checkbox"> Net3</label><label><input id="studioAudioNet4" type="checkbox"> Net4</label></div></label>
+          </div>
+          <p class="muted">AUTO prend directement l’unique caméra disponible. Avec plusieurs sources, il passe par le Mix LinkPi afin de permettre layout et Auto Director.</p>
+        </section>
+
+        <section class="studio-two-col">
+          <article class="card">
+            <div class="section-head"><div><p class="label">2 · LIVE</p><h2>Qualité du stream</h2></div></div>
+            <div class="field-grid">
+              <label><span>Résolution</span><select id="studioResolution"><option value="-1x-1">Auto / source</option><option value="3840x2160">4K UHD</option><option value="1920x1080" selected>1080p</option><option value="1280x720">720p</option><option value="640x360">360p</option><option value="1080x1920">1080×1920 portrait</option><option value="720x1280">720×1280 portrait</option><option value="360x640">360×640 portrait</option></select></label>
+              <label><span>FPS</span><select id="studioFps"><option value="60">60</option><option value="50">50</option><option value="30" selected>30</option><option value="25">25</option><option value="24">24</option></select></label>
+              <label><span>Codec</span><select id="studioCodec"><option value="auto" selected>Auto selon destination</option><option value="h265">H.265 / HEVC</option><option value="h264">H.264 / AVC</option></select></label>
+              <label><span>Débit live</span><div class="input-with-unit"><input id="studioBitrate" type="number" min="300" max="20000" value="5000"><span>kb/s</span></div><small><label><input id="studioAutoBitrate" type="checkbox" checked> Auto selon destination</label></small></label>
+            </div>
+            <div class="preset-row"><button class="preset-btn" data-studio-quality="wifi">Wi-Fi efficace</button><button class="preset-btn" data-studio-quality="quality">Qualité</button><button class="preset-btn" data-studio-quality="safe">Compatibilité</button></div>
+            <p id="studioQualityHint" class="muted">Auto choisit HEVC quand le provider l’accepte, H.264 quand il l’exige.</p>
+          </article>
+
+          <article class="card">
+            <div class="section-head"><div><p class="label">3 · MASTER</p><h2>Qualité d’enregistrement</h2></div></div>
+            <div class="field-grid">
+              <label><span>Résolution master</span><select id="studioRecordResolution"><option value="-1x-1" selected>Auto / source</option><option value="3840x2160">4K UHD</option><option value="1920x1080">1080p</option><option value="1280x720">720p</option><option value="640x360">360p</option><option value="1080x1920">1080×1920 portrait</option><option value="720x1280">720×1280 portrait</option><option value="360x640">360×640 portrait</option></select></label>
+              <label><span>FPS master</span><select id="studioRecordFps"><option value="60">60</option><option value="50">50</option><option value="30" selected>30</option><option value="25">25</option><option value="24">24</option></select></label>
+              <label><span>Codec master</span><select id="studioRecordCodec"><option value="h265" selected>H.265 / HEVC</option><option value="h264">H.264 / AVC</option></select></label>
+              <label><span>Débit master</span><div class="input-with-unit"><input id="studioRecordBitrate" type="number" min="300" max="20000" value="16000"><span>kb/s</span></div></label>
+            </div>
+            <p class="muted">Le MAIN sert au master MP4. Auto/source évite l’upscale inutile ; choisis 4K seulement si la source et le firmware le tiennent réellement. Le SUB reste réservé au live.</p>
+          </article>
+        </section>
+
+        <section class="card">
+          <div class="section-head"><div><p class="label">4 · DESTINATIONS</p><h2>Où j’envoie le live</h2></div><span id="studioProviderHint" class="mini-badge">0 destination</span></div>
+          <div class="studio-provider-grid">
+            <label class="provider-card"><input type="checkbox" data-studio-provider="youtube"><div><b>YouTube</b><small>HEVC + RTMPS possible</small></div></label>
+            <label class="provider-card"><input type="checkbox" data-studio-provider="twitch"><div><b>Twitch</b><small>H.264 direct compatible</small></div></label>
+            <label class="provider-card recommended"><input type="checkbox" data-studio-provider="restream"><div><b>Restream</b><small>SRT + HEVC recommandé en Wi-Fi</small></div></label>
+            <label class="provider-card"><input type="checkbox" data-studio-provider="remoteobs"><div><b>Remote OBS</b><small>SRT vers un ami / une régie distante</small></div></label>
+          </div>
+          <details class="advanced studio-provider-settings" open><summary>Configurer les providers</summary>
+            <div class="studio-provider-forms">
+              <div class="provider-form"><h3>YouTube</h3><label><span>URL RTMPS</span><input id="studioYoutubeServer" placeholder="rtmps://…/live2"></label><label><span>Stream key</span><input id="studioYoutubeKey" type="password" autocomplete="off"></label><button class="secondary-btn" data-save-provider="youtube">Sauvegarder YouTube</button><small id="studioYoutubeSaved"></small></div>
+              <div class="provider-form"><h3>Twitch</h3><label><span>Serveur RTMP</span><input id="studioTwitchServer" value="rtmp://live.twitch.tv/app"></label><label><span>Stream key</span><input id="studioTwitchKey" type="password" autocomplete="off"></label><button class="secondary-btn" data-save-provider="twitch">Sauvegarder Twitch</button><small id="studioTwitchSaved"></small></div>
+              <div class="provider-form"><h3>Restream</h3><label><span>Mode</span><select id="studioRestreamMode"><option value="srt">SRT + HEVC recommandé</option><option value="rtmp">RTMP H.264</option><option value="rtmps">RTMPS H.264</option></select></label><label><span>URL SRT</span><input id="studioRestreamSrt" placeholder="srt://…"></label><label><span>Serveur RTMP(S)</span><input id="studioRestreamServer" placeholder="rtmps://…"></label><label><span>Stream key</span><input id="studioRestreamKey" type="password" autocomplete="off"></label><button class="secondary-btn" data-save-provider="restream">Sauvegarder Restream</button><small id="studioRestreamSaved"></small></div>
+            </div>
+          </details>
+        </section>
+
+        <section class="studio-two-col">
+          <article class="card">
+            <div class="section-head"><div><p class="label">REMOTE OBS</p><h2>Envoyer à un ami</h2></div><span class="mini-badge">SRT</span></div>
+            <div class="field-grid">
+              <label><span>Mode</span><select id="studioObsMode"><option value="direct">Direct · port UDP chez l’ami</option><option value="relay">Relay · zéro port entrant</option></select></label>
+              <label><span>Codec</span><select id="studioObsCodec"><option value="h265" selected>H.265 · recommandé</option><option value="h264">H.264 · compatibilité</option></select></label>
+              <label><span>IP / DNS de l’ami</span><input id="studioObsHost" placeholder="friend.example.net"></label>
+              <label><span>Port UDP</span><input id="studioObsPort" type="number" value="9001" min="1" max="65535"></label>
+              <label><span>Latence SRT</span><div class="input-with-unit"><input id="studioObsLatency" type="number" value="120" min="20" max="8000"><span>ms</span></div></label>
+              <label><span>Passphrase</span><input id="studioObsPassphrase" type="password" autocomplete="off" placeholder="10–79 caractères"></label>
+              <label class="studio-relay-only"><span>Relay publish URL</span><input id="studioObsRelayPublish" placeholder="srt://relay…publish…"></label>
+              <label class="studio-relay-only"><span>Relay read URL</span><input id="studioObsRelayRead" placeholder="srt://relay…read…"></label>
+            </div>
+            <div class="action-row"><button id="studioObsPreview" class="secondary-btn">Générer le lien OBS</button><button id="studioObsSave" class="secondary-btn">Sauvegarder Remote OBS</button></div>
+            <div class="generated-box"><code id="studioObsOutput">Renseigne les paramètres Remote OBS.</code><button id="studioObsCopy" class="copy-btn" disabled>Copier</button></div>
+            <p class="muted">Dans OBS : Source média → Input = lien généré → Input Format = <code>mpegts</code>. Pour le direct, ton ami ouvre seulement le port UDP choisi.</p>
+          </article>
+
+          <article class="card">
+            <div class="section-head"><div><p class="label">INVITÉ INTERNET</p><h2>Ajouter une source distante</h2></div><span class="mini-badge">Net1–Net4</span></div>
+            <p class="muted">Le LinkPi décode RTSP / RTMP / SRT / UDP. Un lien VDO.Ninja WebRTC n’est pas directement décodable : utilise un bridge WHIP/WebRTC → SRT/RTSP, puis colle son URL ici.</p>
+            <p class="muted">Pour SRT entrant, indique une URL caller vers ce LinkPi (par ex. <code>srt://IP_LINKPI:7001?mode=caller&amp;latency=120000</code>) : Companion configure automatiquement le receiver/listener natif et te renvoie l’URL à donner à l’émetteur.</p>
+            <div class="field-grid">
+              <label><span>Slot</span><select id="studioGuestSlot"><option value="1">Net1</option><option value="2">Net2</option><option value="3">Net3</option><option value="4">Net4</option></select></label>
+              <label><span>Nom</span><input id="studioGuestName" value="Invité"></label>
+              <label class="wide-field"><span>URL réseau</span><input id="studioGuestUrl" placeholder="srt://… ou rtsp://…"></label>
+              <label><span>Buffer</span><select id="studioGuestBuffer"><option value="1" selected>Temps réel</option><option value="0">Normal</option><option value="2">Buffer</option><option value="3">Sync</option></select></label>
+              <label><span>Audio</span><select id="studioGuestAudio"><option value="yes" selected>Avec audio</option><option value="no">Sans audio</option></select></label>
+            </div>
+            <div class="action-row"><button id="studioGuestApply" class="secondary-btn">Ajouter / mettre à jour</button><button id="studioGuestDisable" class="text-btn">Désactiver ce slot</button></div>
+            <p id="studioGuestStatus" class="muted"></p>
+          </article>
+        </section>
+
+        <section class="card studio-transport">
+          <div class="section-head"><div><p class="label">5 · GO LIVE</p><h2>Les quatre boutons utiles</h2></div><span id="studioActionStatus" class="mini-badge">Prêt</span></div>
+          <div class="studio-big-actions">
+            <button id="studioStartStream" class="primary-btn big-action">▶ Stream</button>
+            <button id="studioStopStream" class="secondary-btn big-action">■ Stop stream</button>
+            <button id="studioStartRecord" class="record-btn big-action">● Record</button>
+            <button id="studioStopRecord" class="secondary-btn big-action">■ Stop record</button>
+          </div>
+          <div class="studio-record-options">
+            <span>Enregistrer :</span>
+            <label><input id="studioRecordAll" type="checkbox" checked> Toutes les sources actives + Program</label>
+            <label><input id="studioRecordHdmi" type="checkbox"> HDMI</label>
+            <label><input id="studioRecordUsb" type="checkbox"> USB</label>
+            <label><input id="studioRecordProgram" type="checkbox"> Program</label>
+          </div>
+          <div id="studioStorageSummary" class="callout warning"><strong>Disque externe</strong><span>Lecture du stockage…</span></div>
+          <div id="studioMountRow" class="action-row"></div>
+        </section>
+
+        <section class="card">
+          <div class="section-head"><div><p class="label">AUTO DIRECTOR</p><h2>Auto champ / contrechamp</h2></div><span id="studioAutoBadge" class="mini-badge">OFF</span></div>
+          <p class="muted">OFF garde le layout manuel. DRY-RUN observe sans couper. AUTO change uniquement la vidéo ; le mix audio reste continu.</p>
+          <div class="field-grid studio-auto-grid">
+            <label><span>Caméra A</span><select id="studioAutoCamA"><option value="0">HDMI</option><option value="1">USB</option><option value="2">Net1</option><option value="3">Net2</option><option value="4">Net3</option><option value="5">Net4</option></select></label>
+            <label><span>Audio A</span><select id="studioAutoAudioA"><option value="0">HDMI</option><option value="1">USB</option><option value="2">Net1</option><option value="3">Net2</option><option value="4">Net3</option><option value="5">Net4</option></select></label>
+            <label><span>Caméra B</span><select id="studioAutoCamB"><option value="1">USB</option><option value="0">HDMI</option><option value="2">Net1</option><option value="3">Net2</option><option value="4">Net3</option><option value="5">Net4</option></select></label>
+            <label><span>Audio B</span><select id="studioAutoAudioB"><option value="1">USB</option><option value="0">HDMI</option><option value="2">Net1</option><option value="3">Net2</option><option value="4">Net3</option><option value="5">Net4</option></select></label>
+          </div>
+          <div class="action-row"><button id="studioPrepareAuto" class="secondary-btn">Préparer les scènes A/B</button><button class="secondary-btn" data-studio-calibrate="a:noise">Silence A</button><button class="secondary-btn" data-studio-calibrate="a:speech">Parole A</button><button class="secondary-btn" data-studio-calibrate="b:noise">Silence B</button><button class="secondary-btn" data-studio-calibrate="b:speech">Parole B</button></div>
+          <div class="mode-row"><button class="mode-btn" data-studio-mode="OFF">OFF</button><button class="mode-btn" data-studio-mode="DRY_RUN">DRY-RUN</button><button class="mode-btn mode-auto" data-studio-mode="AUTO">AUTO</button><button class="secondary-btn" data-go-view="director">Réglages avancés</button></div>
+          <p id="studioAutoHint" class="muted"></p>
+        </section>
+      </section>
+
       <section data-view="status" class="view-panel">
         <section class="view-heading card"><div><p class="label">DIAGNOSTIC</p><h2>État du LinkPi</h2><p class="muted">Une vue simple de ce qui fonctionne et de ce qui manque avant un tournage.</p></div><span id="statusOverall" class="status-pill status-warn">INCOMPLET</span></section>
         <section class="grid grid-health companion-health">
@@ -206,5 +334,6 @@
     </main>
   </div>
   <script type="module" src="/app.js"></script>
+  <script type="module" src="/studio.js"></script>
 </body>
 </html>
