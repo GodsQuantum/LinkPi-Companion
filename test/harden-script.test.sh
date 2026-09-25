@@ -17,8 +17,8 @@ import json, sys
 calls=json.load(open(sys.argv[1]))
 assert [c['url'] for c in calls] == ['/conf/updateServiceConf','/conf/updateNtpConf']
 svc=calls[0]['data']; ntp=calls[1]['data']
-assert svc == {'telnet':False,'ssh':True,'php':True,'nginx':True,'crond':True,'onvif':False,'ndi':False,'sls':False,'frp':False,'trans':False}
+assert svc == {'telnet':False,'ssh':True,'php':True,'nginx':True,'crond':True,'onvif':False,'ndi':False,'sls':True,'frp':False,'trans':False}
 assert ntp == {'enable':True,'server':'fr.pool.ntp.org','interval':5}
 assert all(c['url'] != '/system/systemReboot' for c in calls)
-print('PASS harden script applies safe service/NTP policy without reboot')
+print('PASS harden script preserves SLS while applying safe service/NTP policy without reboot')
 PY

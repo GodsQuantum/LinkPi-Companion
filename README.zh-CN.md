@@ -104,7 +104,7 @@ http://<LINKPI_IP>:8787
 
 平台凭据可以保存在 LinkPi 本机私有 `providers.json` 中（权限 `0600`）。GET API 只返回“已配置/未配置”，不会返回 stream key、SRT passphrase 或私有 publish/read URL。
 
-VDO.Ninja 链接属于 WebRTC，本固件不能直接解码。可以使用 MediaMTX 等 WebRTC/WHIP 桥接服务，将嘉宾转换为 SRT 或 RTSP，再加入 Net1–Net4。
+VDO.Ninja 链接属于 WebRTC，本固件不能直接解码。可使用 MediaMTX 等 WebRTC/WHIP 桥接服务，将 H.264 + AAC 发布到 Studio 生成的 LinkPi 原生 SRT 输入地址（UDP 8080），或将嘉宾转换为 RTSP/SRT 后使用拉流模式。内置 SLS 更适合 H.264 MPEG-TS；加密/HEVC 嘉宾链路建议使用外部中继。
 
 ## 录制目标
 

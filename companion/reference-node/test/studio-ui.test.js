@@ -27,6 +27,10 @@ test('Studio supports provider presets and network guests', () => {
   for (const p of ['youtube','twitch','restream']) assert.match(html, new RegExp(`data-studio-provider="${p}"`));
   assert.match(html, /id="studioGuestUrl"/);
   assert.match(html, /id="studioGuestSlot"/);
+  assert.match(html, /id="studioGuestMode"/);
+  assert.match(html, /value="receive-srt"/);
+  assert.match(html, /id="studioGuestOutput"/);
+  assert.match(html, /id="studioGuestCopy"/);
   assert.match(html, /VDO\.Ninja/i);
   assert.match(js, /import '.\/studio\.js'/);
   assert.match(studio, /\/api\/studio\/state/);

@@ -55,7 +55,7 @@ Run after install/recovery:
 ./scripts/harden.sh <LINKPI_IP>
 ```
 
-The script backs up current `service.json` and `ntp.json`, then applies the tested policy: Telnet/ONVIF/NDI/SLS off; SSH/PHP/nginx/crond on; FRP/trans off; NTP enabled with `fr.pool.ntp.org`. It never reboots automatically. A normal LinkPi reboot is required for daemons already running before the change to stop.
+The script backs up current `service.json` and `ntp.json`, then applies the tested policy: Telnet/ONVIF/NDI off; SSH/PHP/nginx/crond on; FRP/trans off; **SLS is preserved** because Studio may deliberately use it for incoming SRT guests; NTP is enabled with `fr.pool.ntp.org`. It never reboots automatically. A normal LinkPi reboot is required when a service enable/disable change must take effect.
 
 ## Network security
 

@@ -290,12 +290,22 @@ $('#studioObsSave').addEventListener('click', async () => {
   } catch (error) { action(error.message, true); }
 });
 
+function updateGuestMode() {
+  const receive = $('#studioGuestMode').value === 'receive-srt';
+  $('#studioGuestHostField').hidden = !receive;
+  $('#studioGuestUrlField').hidden = receive;
+  if (receive && !$('#studioGuestHost').value) $('#studioGuestHost').value = window.location.hostname;
+}
+$('#studioGuestMode').addEventListener('change', updateGuestMode);
+updateGuestMode();
+
 $('#studioGuestApply').addEventListener('click', async () => {
   const slot = Number($('#studioGuestSlot').value);
   try {
     const configured = await request('/api/studio/network/' + slot, {
       method: 'PUT',
       body: JSON.stringify({
+        inputMode: $('#studioGuestMode').value,
         name: $('#studioGuestName').value,
         url: $('#studioGuestUrl').value,
         audio: $('#studioGuestAudio').value === 'yes',
@@ -303,14 +313,30 @@ $('#studioGuestApply').addEventListener('click', async () => {
         bufferMode: Number($('#studioGuestBuffer').value),
         minDelay: 300,
         transport: 'tcp',
-        publishHost: window.location.hostname,
+        publishHost: $('#studioGuestHost').value || window.location.hostname,
       }),
     });
-    $('#studioGuestStatus').textContent = configured.publisherUrl
-      ? tr('Net' + slot + ' configuré.') + ' ' + configured.publisherUrl
+    $('#studioGuestStatus').textContent = configured.rebootRequired
+      ? tr('SLS activé · redémarre le LinkPi une fois avant le premier invité SRT.')
       : tr('Net' + slot + ' configuré.');
+    if (configured.publisherUrl) {
+      $('#studioGuestOutput').textContent = configured.publisherUrl;
+      $('#studioGuestCopy').disabled = false;
+      $('#studioGuestCopy').dataset.copyValue = configured.publisherUrl;
+    } else {
+      $('#studioGuestOutput').textContent = tr('Source pull configurée.');
+      $('#studioGuestCopy').disabled = true;
+      delete $('#studioGuestCopy').dataset.copyValue;
+    }
     await loadState();
   } catch (error) { $('#studioGuestStatus').textContent = error.message; }
+});
+$('#studioGuestCopy').addEventListener('click', async () => {
+  const value = $('#studioGuestCopy').dataset.copyValue;
+  if (!value) return;
+  await navigator.clipboard.writeText(value);
+  $('#studioGuestCopy').textContent = tr('Copié ✓');
+  setTimeout(() => { $('#studioGuestCopy').textContent = tr('Copier'); }, 1200);
 });
 $('#studioGuestDisable').addEventListener('click', async () => {
   const slot = Number($('#studioGuestSlot').value);

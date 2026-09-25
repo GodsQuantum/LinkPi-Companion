@@ -72,14 +72,17 @@ test('Studio exposes explicit Auto Director prepare and calibration actions', ()
   assert.match(routerPhp, /studio_calibrate/);
 });
 
-test('SRT network inputs follow the native LinkPi receiver/listener model', () => {
-  const start = studioPhp.indexOf('function studio_set_network_source');
+test('incoming SRT guests use the native LinkPi SLS push/pull path on UDP 8080', () => {
+  const start = studioPhp.indexOf('function studio_sls_state');
   const end = studioPhp.indexOf('function studio_disable_network_source', start);
   const block = studioPhp.slice(start, end);
-  assert.match(block, /updateReceiverConf/);
-  assert.match(block, /studio_srt_receiver_url\(\$port,\$lat,\$pass,\$streamid,'listener'\)/);
-  assert.match(block, /'mode'=>'caller'/);
+  assert.match(block, /'port'=>8080/);
+  assert.match(block, /\/conf\/updateServiceConf/);
+  assert.match(block, /push\/live\//);
+  assert.match(block, /pull\/live\//);
+  assert.match(block, /studio_guest_stream_name/);
   assert.match(block, /publisherUrl/);
+  assert.doesNotMatch(block, /updateReceiverConf/);
 });
 
 test('saved Remote OBS link is explicit POST-only and absent from normal Studio state', () => {
