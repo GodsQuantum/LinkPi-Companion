@@ -9,9 +9,9 @@ Target capture chain currently planned:
 - Camera A: Blackmagic camera through SDI → HDMI into LinkPi HDMI input.
 - Camera B: DJI Osmo Pocket 3 through the LinkPi USB/UVC path.
 
-Confirm with `enc.getInputState` which channels are actually available, their sample rates and the negotiated video modes. Do not assume the Pocket 3 mode from desktop behavior.
+Confirm with `enc.getInputState` which channels are actually available, their sample rates and the negotiated video modes. The DJI Osmo Pocket 3 UVC path has now been validated on the tested ENC1 V3 firmware: use the real UVC modes advertised by the camera and do not assume that a desktop “4K” selection means the LinkPi is currently encoding 4K.
 
-Use the official 12 V / 2 A LinkPi supply during USB-camera tests. USB-camera stability and reconnect behavior were improved in recent firmware, but the real device must be soak-tested.
+Use the official 12 V / 2 A LinkPi supply during USB-camera tests. USB-camera stability and reconnect behavior were improved in recent firmware; Studio preserves the native UVC enable/reconnect path, but every production camera still needs a soak test.
 
 ## 2. Decide microphone transport
 
@@ -74,9 +74,11 @@ Only when every readiness gate is green:
 
 ## 7. Production streaming/recording
 
-Use the Companion Streaming step to construct and validate RTMP/RTMPS, SRT or RTP/UDP values, then copy them into the native LinkPi Push/Stream page. During this phase Companion remains read-only for production stream/record configuration.
+The Guide remains non-destructive, but the **Studio** view can now apply explicit native LinkPi actions for source selection, MAIN/SUB quality, provider configuration, Stream/Stop, Record/Stop, external storage and network guests. Use Studio for the simple workflow and keep the native LinkPi pages available for inspection and recovery.
 
 The recording target is CAM A + CAM B + PROGRAM in MP4 on external USB storage while PROGRAM is streamed. Do not mark that workflow READY until the three simultaneous recordings have been benchmarked with real hardware.
+
+For provider tests, validate one destination at a time before combining them. Prefer HEVC/H.265 where the selected transport/provider supports it; keep H.264 for compatibility paths that require it. Restream SRT and Remote OBS SRT must be tested against the actual remote endpoint rather than assumed from configuration alone.
 
 ### Encode/load validation
 
@@ -85,6 +87,6 @@ After Auto Director itself is stable, measure the actual encode budget for:
 - Camera A ISO;
 - Camera B ISO;
 - Program Mix;
-- simultaneous YouTube/Twitch push.
+- simultaneous live output through the selected provider/transport.
 
 Choose frame rate, bitrate, codec, container and A/V delay from those measurements rather than pre-hardware assumptions.
