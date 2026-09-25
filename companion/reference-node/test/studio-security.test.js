@@ -50,7 +50,7 @@ test('Remote OBS direct uses validated LinkPi-listener / OBS-caller SRT directio
   assert.match(block, /'mode'=>'caller'/);
   assert.match(block, /transtype.*live/);
   assert.match(block, /pkt_size.*1316/);
-  assert.match(block, /0\.0\.0\.0/);
+  assert.match(block, /127\.0\.0\.1/);
 });
 
 test('SRT providers use native stream2.srt instead of generic push paths', () => {
