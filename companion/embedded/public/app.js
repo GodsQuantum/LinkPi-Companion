@@ -1,6 +1,7 @@
 import { buildRtmp, buildSrt, buildUdp } from './stream-builders.js';
 import { applyLocale, normalizeLocale, t, translateText } from './i18n.js';
 import { nativeUrl } from './native-pages.js';
+import './studio.js';
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
@@ -10,7 +11,7 @@ let currentLocale = normalizeLocale(URL_LANGUAGE || localStorage.getItem(LANGUAG
 const tr = source => translateText(currentLocale, source);
 
 function showView(name, { updateHash = true } = {}) {
-  const safe = ['guide', 'director', 'status'].includes(name) ? name : 'guide';
+  const safe = ['guide', 'studio', 'director', 'status'].includes(name) ? name : 'guide';
   for (const view of $$('[data-view]')) view.classList.toggle('view-active', view.dataset.view === safe);
   for (const button of $$('[data-nav-target]')) button.classList.toggle('active', button.dataset.navTarget === safe);
   if (updateHash && window.location.hash !== `#${safe}`) window.location.hash = safe;

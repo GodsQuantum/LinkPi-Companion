@@ -39,6 +39,9 @@ LinkPi Companion 把这些流程集中到 `http://<LINKPI_IP>:8787`：
 - **默认安全** — 原生 C++ Encoder 始终负责核心编码；只有全部 readiness 条件满足后才允许 AUTO。
 - **跟设备一起走** — Companion 直接运行在 LinkPi 上，换场地时设置向导也跟着设备走。
 
+<p align="center"><img src="docs/assets/screenshot-studio.png" width="920" alt="LinkPi Companion Studio 简易原生导播台"></p>
+<p align="center"><i>Studio 把 LinkPi 原生控制整理成简单流程：信号源 → 质量 → 目标 → 推流/录制。</i></p>
+
 <p align="center">
   <img src="docs/assets/screenshot-streaming.png" width="455" alt="LinkPi Companion SRT 推流助手">
   <img src="docs/assets/screenshot-autodirector.png" width="455" alt="LinkPi Companion Auto Director">
@@ -83,16 +86,25 @@ http://<LINKPI_IP>:8787
 
 界面支持 **English / Français / 简体中文**。语言选择只保存在浏览器中，也可以用 `?lang=en`、`?lang=fr` 或 `?lang=zh-CN` 直接打开指定语言。
 
-## 不再猜推流字段
+## Studio：不用钻菜单也能原生控制 LinkPi
 
-首次部署时，Companion **不会自动修改生产 Push/Stream 配置**。它负责生成并验证应该粘贴到 LinkPi 原生 UI 的值，让调试过程可逆且更安全。
+**指南**仍然是安全的辅助流程。新的 **Studio** 页面还可以通过与 LinkPi 原生界面相同的 RPC 执行明确的控制操作。
 
-- **RTMP / RTMPS** — 服务器 + stream key → 完整推流 URL。
-- **SRT** — Caller / Listener / Rendezvous、主机、端口、延迟、可选 passphrase 与 streamid。
-- **RTP / UDP** — 单播/组播地址、端口、TTL 与 RTP 头开关。
-- **YouTube / Twitch** — 专用输入表单 + 通用 RTMP/RTMPS。
+- **信号源** — Auto、HDMI、USB/UVC、Program/Mix 或 Net1–Net4。
+- **直播质量** — 4K、1080p、720p、360p 与竖屏尺寸；在设备与输入允许时提供 24/25/30/50/60 fps。
+- **母版与直播分离** — MAIN 可保持高质量 H.265 录制母版，SUB 使用更低带宽进行直播。
+- **平台** — YouTube、Twitch、Restream、Remote OBS。
+- **控制** — 可直接在 Companion 中 Stream/Stop、Record/Stop。
+- **互联网嘉宾** — 将 RTSP/RTMP/SRT/UDP 网络源配置到 Net1–Net4。
+- **自动母版 / 信号源最大分辨率** — UVC 摄像机自动选择在目标 FPS 下真实提供的最高模式；HDMI 跟随输入信号。
+- **Auto Director A/B 配对** — 可将任意两个 HDMI/USB/Net 输入设为 A/B，并直接在 Studio 中准备原生场景与静音/讲话校准。
+- **Auto Director** — OFF / DRY-RUN / AUTO 仍受 readiness 安全条件保护。
 
-密钥只停留在当前浏览器输入框中。Companion 的诊断 API 也会过滤敏感字段，不返回原生 push URL。
+平台策略会根据目的地自动调整：YouTube 直推可使用 RTMPS + HEVC/H.265；Twitch 普通硬件 RTMP 使用 H.264；Restream 在账户提供 SRT ingest 时优先 SRT + HEVC；Remote OBS 默认使用 SRT + H.265，并提供 H.264 兼容模式。
+
+平台凭据可以保存在 LinkPi 本机私有 `providers.json` 中（权限 `0600`）。GET API 只返回“已配置/未配置”，不会返回 stream key、SRT passphrase 或私有 publish/read URL。
+
+VDO.Ninja 链接属于 WebRTC，本固件不能直接解码。可以使用 MediaMTX 等 WebRTC/WHIP 桥接服务，将嘉宾转换为 SRT 或 RTSP，再加入 Net1–Net4。
 
 ## 录制目标
 
@@ -103,7 +115,9 @@ CAM B ─┼─► PROGRAM ─► 直播推流
        └─► CAM A + CAM B + PROGRAM → 外接 USB 硬盘 MP4
 ```
 
-三路 MP4 同时录制会一直标记为“未验证”，直到在真实 LinkPi 负载下完成基准测试。
+原生录制文件写入 `/root/usb/`，并可通过 `/files/` 浏览。三路 MP4 同时录制会一直标记为“未验证”，直到在真实 LinkPi 负载下完成基准测试。
+
+> **USB/UVC 提示：** 4K 选项仍然保留，但在 ENC1 V3 上应先把 1080p30 作为稳定基线，只有摄像机与线材通过长时间 4K soak test 后再把 4K 视为生产级。
 
 ## Auto Director
 

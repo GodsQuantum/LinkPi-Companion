@@ -81,6 +81,8 @@ Short backchannels and tiny interruptions should not steal the camera. Sustained
 
 The native Carousel path changes MixV dynamically. Generic `ctrl.setLay*` paths can reload Encoder configuration and are therefore not used for live editorial cuts. Auto Director only enables Carousel scene mutation after dedicated scene IDs have been verified with real inputs.
 
-## Companion read-only diagnostics
+## Companion diagnostics and Studio control
 
-The embedded `companion.php` exposes sanitized read models through `/api/companion/summary`, `/channels`, `/recording` and `/streaming`. The streaming read model never returns native push paths and recursively redacts credential-shaped keys. Guide progress is browser-local and contains only the current step and completed-step identifiers. Streaming secrets are never stored by Companion.
+The embedded `companion.php` exposes sanitized read models through `/api/companion/summary`, `/channels`, `/recording` and `/streaming`. The streaming read model never returns native push paths and recursively redacts credential-shaped keys. Guide progress is browser-local and contains only the current step and completed-step identifiers.
+
+`studio.php` is the explicit write/control layer. It uses the same native RPC methods as the LinkPi firmware UI (`enc.update`, `push.update/start/stop`, `rec.update/start/stop`) for source, MAIN/SUB quality, providers, recording and Net1–Net4 inputs. Provider credentials are stored only on the appliance in `providers.json` with mode `0600`; Studio GET state returns configured/not-configured flags rather than stream keys, SRT passphrases or private URLs. Studio does not replace the native Encoder.

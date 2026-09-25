@@ -24,9 +24,12 @@ Developer Mode / EncoderJS is deliberately not used. On this firmware it is an a
 
 ## What is complete
 
-- LinkPi Companion shell with beginner Guide, Auto Director and Status views;
+- LinkPi Companion shell with beginner Guide, **Studio**, Auto Director and Status views;
+- Studio native control for source selection, MAIN/SUB quality, Stream/Stop and Record/Stop;
+- YouTube, Twitch, Restream SRT/HEVC and Remote OBS SRT providers with write-only secrets;
+- Net1–Net4 Internet guest configuration for RTSP/RTMP/SRT/UDP sources;
 - six-step commissioning flow from camera detection to preflight;
-- read-only sanitized diagnostics for channels, storage/recording and streaming destinations;
+- sanitized diagnostics for channels, storage/recording and streaming destinations;
 - RTMP/RTMPS, SRT and RTP/UDP value generators with validation/copy;
 - workflow-aware READY / INCOMPLETE / PROBLEM preflight;
 - exact native LinkPi PHP deep-links instead of generic dashboard links;
