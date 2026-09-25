@@ -22,11 +22,14 @@ curl -fsS --connect-timeout 3 --max-time 6 "$BASE_URL/config/ntp.json" -o "$BACK
 python3 - "$BASE_URL" "$NTP_SERVER" <<'PY'
 import json, sys, urllib.request
 base, ntp_server = sys.argv[1:]
+with urllib.request.urlopen(base.rstrip('/') + '/config/service.json', timeout=6) as response:
+    current_service=json.loads(response.read().decode())
+preserve_sls=current_service.get('sls', False) is True
 relay = base.rstrip('/') + '/link/relay.php'
 changes = [
     ('/conf/updateServiceConf', {
         'telnet': False, 'ssh': True, 'php': True, 'nginx': True,
-        'crond': True, 'onvif': False, 'ndi': False, 'sls': False,
+        'crond': True, 'onvif': False, 'ndi': False, 'sls': preserve_sls,
         'frp': False, 'trans': False,
     }),
     ('/conf/updateNtpConf', {
@@ -44,11 +47,12 @@ for url, data in changes:
 PY
 SERVICE="$(curl -fsS --connect-timeout 3 --max-time 6 "$BASE_URL/config/service.json")"
 NTP="$(curl -fsS --connect-timeout 3 --max-time 6 "$BASE_URL/config/ntp.json")"
-python3 - "$SERVICE" "$NTP" "$NTP_SERVER" <<'PY'
+python3 - "$SERVICE" "$NTP" "$NTP_SERVER" "$BACKUP/service.json" <<'PY'
 import json, sys
 svc=json.loads(sys.argv[1]); ntp=json.loads(sys.argv[2]); server=sys.argv[3]
+before=json.load(open(sys.argv[4]))
 expected={'telnet':False,'ssh':True,'php':True,'nginx':True,'crond':True,
-          'onvif':False,'ndi':False,'sls':False,'frp':False,'trans':False}
+          'onvif':False,'ndi':False,'sls':before.get('sls',False) is True,'frp':False,'trans':False}
 for key, value in expected.items():
     if svc.get(key) is not value:
         raise SystemExit(f'service verification failed: {key}={svc.get(key)!r}')
