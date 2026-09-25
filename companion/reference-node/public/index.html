@@ -229,11 +229,12 @@
               <label><span>Latence SRT</span><div class="input-with-unit"><input id="studioObsLatency" type="number" value="120" min="20" max="8000"><span>ms</span></div></label>
               <label><span>Passphrase</span><input id="studioObsPassphrase" type="password" autocomplete="off" placeholder="10–79 caractères"></label>
               <label class="studio-relay-only"><span>Relay publish URL</span><input id="studioObsRelayPublish" placeholder="srt://relay…publish…"></label>
-              <label class="studio-relay-only"><span>Relay read URL</span><input id="studioObsRelayRead" placeholder="srt://relay…read…"></label>
+              <label class="studio-relay-only"><span>Relay read URL</span><input id="studioObsRelayRead" placeholder="srt://relay…read…"></label><label class="studio-relay-only"><span>Relay Browser Source HTTPS</span><input id="studioObsRelayWeb" placeholder="https://relay.example/share/…"></label>
             </div>
-            <div class="action-row"><button id="studioObsPreview" class="secondary-btn">Générer le lien OBS</button><button id="studioObsSave" class="secondary-btn">Sauvegarder Remote OBS</button></div>
+            <div class="action-row"><button id="studioObsPreview" class="secondary-btn">Générer le lien OBS</button><button id="studioObsLoadSaved" class="secondary-btn">Lien OBS enregistré</button><button id="studioObsSave" class="secondary-btn">Sauvegarder Remote OBS</button></div>
             <div class="generated-box"><code id="studioObsOutput">Renseigne les paramètres Remote OBS.</code><button id="studioObsCopy" class="copy-btn" disabled>Copier</button></div>
-            <p class="muted">Dans OBS : Source média → Input = lien généré → Input Format = <code>mpegts</code>. Pour le direct, ton ami ouvre seulement le port UDP choisi.</p>
+            <div class="generated-box"><code id="studioWebOutput">Browser Source relay non configurée.</code><button id="studioWebCopy" class="copy-btn" disabled>Copier Browser Source</button></div>
+                        <p class="muted">Dans OBS : Source média → Input = lien généré → Input Format = <code>mpegts</code>. Pour le direct, ton ami ouvre seulement le port UDP choisi.</p>
           </article>
 
           <article class="card">

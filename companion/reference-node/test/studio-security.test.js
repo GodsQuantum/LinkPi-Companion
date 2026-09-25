@@ -81,3 +81,33 @@ test('SRT network inputs follow the native LinkPi receiver/listener model', () =
   assert.match(block, /'mode'=>'caller'/);
   assert.match(block, /publisherUrl/);
 });
+
+test('saved Remote OBS link is explicit POST-only and absent from normal Studio state', () => {
+  assert.match(routerPhp, /POST' && \$path === '\/api\/studio\/remoteobs\/link'/);
+  assert.match(routerPhp, /studio_remote_obs_saved_link/);
+  const publicStart = studioPhp.indexOf('function studio_public_providers');
+  const publicEnd = studioPhp.indexOf('function studio_save_provider', publicStart);
+  const publicBlock = studioPhp.slice(publicStart, publicEnd);
+  assert.doesNotMatch(publicBlock, /relayReadUrl.*=>/);
+  assert.doesNotMatch(publicBlock, /passphrase.*=>\s*\$p/);
+});
+
+test('Remote OBS relay can expose a deliberate Browser Source only through explicit link action', () => {
+  const publicStart = studioPhp.indexOf('function studio_public_providers');
+  const publicEnd = studioPhp.indexOf('function studio_save_provider', publicStart);
+  const publicBlock = studioPhp.slice(publicStart, publicEnd);
+  assert.match(publicBlock, /relayWebConfigured/);
+  assert.doesNotMatch(publicBlock, /=>\s*\$p\['relayWebUrl'\]/);
+  const previewStart = studioPhp.indexOf('function studio_remote_obs_preview');
+  const previewEnd = studioPhp.indexOf('function studio_provider_path', previewStart);
+  const previewBlock = studioPhp.slice(previewStart, previewEnd);
+  assert.match(previewBlock, /browserUrl/);
+});
+
+test('native SRT changes follow modern LinkPi stream.php updateDefaultConf reload path', () => {
+  const start = studioPhp.indexOf('function studio_set_native_srt');
+  const end = studioPhp.indexOf('function studio_stream_state', start);
+  const block = studioPhp.slice(start, end);
+  assert.match(block, /studio_native_func\('\/conf\/updateDefaultConf',\$config\)/);
+  assert.doesNotMatch(block, /enc\.update/);
+});

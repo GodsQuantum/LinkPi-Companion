@@ -229,6 +229,7 @@ function remoteObsPayload() {
     passphrase: $('#studioObsPassphrase').value,
     relayPublishUrl: $('#studioObsRelayPublish').value,
     relayReadUrl: $('#studioObsRelayRead').value,
+    relayWebUrl: $('#studioObsRelayWeb').value,
     codec: $('#studioObsCodec').value,
   };
 }
@@ -240,9 +241,26 @@ $('#studioObsMode').dispatchEvent(new Event('change'));
 $('#studioObsPreview').addEventListener('click', async () => {
   try {
     const preview = await request('/api/studio/remoteobs/preview', { method: 'POST', body: JSON.stringify(remoteObsPayload()) });
-    $('#studioObsOutput').textContent = preview.obsUrl;
-    $('#studioObsCopy').disabled = false;
-    $('#studioObsCopy').dataset.copyValue = preview.obsUrl;
+    $('#studioObsOutput').textContent = preview.obsUrl || tr('SRT read URL non configurée · utilise Browser Source.');
+    $('#studioObsCopy').disabled = !preview.obsUrl;
+    if (preview.obsUrl) $('#studioObsCopy').dataset.copyValue = preview.obsUrl; else delete $('#studioObsCopy').dataset.copyValue;
+    $('#studioWebOutput').textContent = preview.browserUrl || tr('Browser Source relay non configurée.');
+    $('#studioWebCopy').disabled = !preview.browserUrl;
+    if (preview.browserUrl) $('#studioWebCopy').dataset.copyValue = preview.browserUrl; else delete $('#studioWebCopy').dataset.copyValue;
+  } catch (error) {
+    $('#studioObsOutput').textContent = error.message;
+    $('#studioObsCopy').disabled = true;
+  }
+});
+$('#studioObsLoadSaved').addEventListener('click', async () => {
+  try {
+    const saved = await request('/api/studio/remoteobs/link', { method: 'POST', body: '{}' });
+    $('#studioObsOutput').textContent = saved.obsUrl || tr('SRT read URL non configurée · utilise Browser Source.');
+    $('#studioObsCopy').disabled = !saved.obsUrl;
+    if (saved.obsUrl) $('#studioObsCopy').dataset.copyValue = saved.obsUrl; else delete $('#studioObsCopy').dataset.copyValue;
+    $('#studioWebOutput').textContent = saved.browserUrl || tr('Browser Source relay non configurée.');
+    $('#studioWebCopy').disabled = !saved.browserUrl;
+    if (saved.browserUrl) $('#studioWebCopy').dataset.copyValue = saved.browserUrl; else delete $('#studioWebCopy').dataset.copyValue;
   } catch (error) {
     $('#studioObsOutput').textContent = error.message;
     $('#studioObsCopy').disabled = true;
@@ -255,6 +273,14 @@ $('#studioObsCopy').addEventListener('click', async () => {
   $('#studioObsCopy').textContent = tr('Copié ✓');
   setTimeout(() => { $('#studioObsCopy').textContent = tr('Copier'); }, 1200);
 });
+$('#studioWebCopy').addEventListener('click', async () => {
+  const value = $('#studioWebCopy').dataset.copyValue;
+  if (!value) return;
+  await navigator.clipboard.writeText(value);
+  $('#studioWebCopy').textContent = tr('Copié ✓');
+  setTimeout(() => { $('#studioWebCopy').textContent = tr('Copier Browser Source'); }, 1200);
+});
+
 $('#studioObsSave').addEventListener('click', async () => {
   try {
     await request('/api/studio/provider/remoteobs', { method: 'PUT', body: JSON.stringify(remoteObsPayload()) });
