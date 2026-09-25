@@ -1,88 +1,79 @@
 # Handoff — LinkPi Companion
 
-Last updated: 2026-09-14
+Last updated: 2026-09-26
+Current public release: **v0.4.0-alpha.2**
 
 ## Current truth
 
-LinkPi Companion and Auto Director no longer depend on an external control computer for production. The final runtime is a lightweight PHP service deployed inside the LinkPi and supervised by the LinkPi's existing `crond`.
+LinkPi Companion is a lightweight control and guidance layer that runs on the LinkPi itself while leaving the native C++ Encoder in charge. It is served at `http://<LINKPI_IP>:8787` and is supervised by the LinkPi's existing `crond`.
 
-Verified target during development:
+Verified development target:
+- LinkPi ENC1 V3 / SS524V100;
+- APP 5.3.0 build 20260731_3295;
+- SDK 5.3.0 build 20260731_30196;
+- SYS 5.3.1 build 20260731;
+- PHP CLI `/usr/php/bin/php`;
+- native Encoder RPC through `/RPC`;
+- FR / EN / Simplified Chinese UI;
+- deployed compatibility path `/link/config/autodirector/`.
 
-- LinkPi ENC1 V3
-- SoC: SS524V100
-- APP: 5.3.0 build 20260731_3295
-- SDK: 5.3.0 build 20260731_30196
-- SYS: 5.3.1 build 20260731
-- PHP CLI: `/usr/php/bin/php`
-- native Encoder RPC: local HTTP `/RPC`
-- LinkPi Companion UI: `http://<linkpi>:8787` (Guide / Auto Director / Status)
-- UI languages: French / English / Simplified Chinese (`?lang=fr|en|zh-CN`)
-- native-link map: `dashboard.php`, `input.php`, `encode.php`, `stream.php`, `push.php`, `record.php`, `storage.php`, `carousel.php`, `mix.php`
-- deployed files: `/link/config/autodirector/`
-
-Developer Mode / EncoderJS is deliberately not used. On this firmware it is an alternate JS Encoder mode, not a safe plug-in host beside the native C++ Encoder.
+Developer Mode / EncoderJS is deliberately not used. It is an alternate encoder path, not a safe extension point beside the native C++ Encoder.
 
 ## What is complete
 
-- LinkPi Companion shell with beginner Guide, **Studio**, Auto Director and Status views;
-- Studio native control for source selection, MAIN/SUB quality, Stream/Stop and Record/Stop;
-- YouTube, Twitch, Restream SRT/HEVC and Remote OBS SRT providers with write-only secrets;
-- Net1–Net4 Internet guest configuration for RTSP/RTMP/SRT/UDP sources;
-- six-step commissioning flow from camera detection to preflight;
-- sanitized diagnostics for channels, storage/recording and streaming destinations;
-- RTMP/RTMPS, SRT and RTP/UDP value generators with validation/copy;
-- workflow-aware READY / INCOMPLETE / PROBLEM preflight;
-- exact native LinkPi PHP deep-links instead of generic dashboard links;
-- multilingual FR/EN/zh-CN UI with browser-local language preference;
+- Beginner Guide, **Studio**, Auto Director and Status views.
+- Exact native LinkPi deep-links for Input, Encode, Stream, Push, Record, Storage, Carousel and Mix.
+- Native Studio control for source selection, MAIN/master and SUB/live quality, Stream/Stop and Record/Stop.
+- H.264/H.265 profiles, LinkPi-native resolutions and practical frame rates with hardware guards.
+- Destination-aware provider strategy for YouTube, Twitch, Restream and Remote OBS.
+- Remote OBS Direct and Relay SRT workflows.
+- Net1–Net4 Internet guest inputs plus native incoming SRT guest support through LinkPi's SLS path.
+- External-storage mount flow, MP4 recording control and fragmentation.
+- Studio-side Auto Director preparation and silence/speech calibration actions.
+- Write-only provider credentials with sanitized GET state.
+- Deterministic A/B/SPLIT editorial state machine with safety timing and readiness gates.
+- Idempotent install/recovery that preserves Companion settings, Studio config, provider secrets and existing cron jobs.
 
-- deterministic A/B/SPLIT editorial state machine;
-- presets Stable / Natural / Reactive;
-- editable acquisition, minimum-shot, refractory, overlap, split-hold, silence, speech thresholds and dominance margin;
-- integrated UI guide explaining every field;
-- native LinkPi RPC telemetry from `enc.getVolume`, `enc.getInputState`, `enc.getSysState`, `carousel.getState`;
-- OFF / DRY_RUN / AUTO / SAFE_SPLIT / MANUAL safety model;
-- server-side AUTO readiness lock;
-- embedded watchdog and boot persistence;
-- 32-bit PHP-safe millisecond timing;
-- install/recovery script that preserves existing calibration and cron jobs.
+## Verified hardware behavior
 
-## Verified pre-hardware behavior
+The DJI Osmo Pocket 3 USB/UVC path has been validated on the target firmware. The device is enumerated through native UVC/UAC, and Companion/Studio includes a firmware-quirk path that uses the real UVC modes advertised by the camera rather than blindly upscaling.
 
-With no cameras or microphones connected, the embedded service reports RPC healthy while `videoReady`, `detectorsReady`, `calibrationReady`, `scenesReady` and therefore `autoReady` remain false. An attempt to arm AUTO is rejected with HTTP 409. This is expected and required.
+The public test suite covers the UVC path, Studio write boundaries, provider secret redaction, Remote OBS SRT direction, native SRT updates, incoming SRT guest handling, Auto Director controls, multilingual UI and native LinkPi deep-links.
 
-The embedded PHP test suite has passed directly on the SS524 target, including:
+At this release, the software safety and control paths are validated, but final production workload limits still depend on the attached cameras, microphones, storage and provider endpoints.
 
-- settings validation;
-- editorial core behavior;
-- local RPC and settings persistence;
-- synthetic readiness;
-- large epoch-millisecond timestamps on 32-bit PHP.
+## Streaming strategy
 
-The reference Node implementation includes deterministic unit/API/UI tests covering the director, Companion diagnostics, wizard, streaming builders and safety boundaries.
+- **YouTube direct:** RTMPS with HEVC/H.265 is available when desired.
+- **Twitch direct:** ordinary hardware RTMP remains H.264 for compatibility.
+- **Restream:** SRT + HEVC is the preferred bandwidth-efficient path when the account exposes SRT ingest; validate the account-specific endpoint before production use.
+- **Remote OBS:** Direct mode uses the validated LinkPi-listener / OBS-caller SRT direction; Relay mode is available when neither end should require inbound NAT.
+- **Internet guest:** LinkPi can use RTSP/RTMP/SRT/UDP network inputs. Browser WebRTC URLs such as VDO.Ninja require a WebRTC/WHIP bridge such as MediaMTX before they become a LinkPi-decodable SRT/RTSP source.
 
-## Appliance hardening state
+## What remains intentionally hardware-specific
 
-On the development unit, persistent service configuration has been set to Telnet/ONVIF/NDI/SLS off, SSH/PHP/nginx/crond on, FRP/trans off, and NTP `fr.pool.ntp.org` with Europe/Paris retained. The firmware writes these settings immediately, but already-running daemons may remain listening until the next normal reboot. `scripts/harden.sh` reproduces this policy after a factory reset or firmware recovery and intentionally does not trigger a reboot.
-
-Direct native RPC ports `6001–6004`, RTSP/RTMP, `8081`, and the legacy debug nginx on `8888` were observed on the LAN during audit. They are documented but not firewall-blocked in v1 because production camera/streaming dependencies have not yet been validated with real hardware.
-
-## What is intentionally deferred
-
-Do not guess these until the real capture chain is attached:
-
-- negotiated Blackmagic HDMI format;
-- DJI Osmo Pocket 3 UVC/UAC behavior;
-- real microphone detector channel/side mapping;
-- noise floor and speech-reference calibration;
-- final A/B/SPLIT native layout IDs and split geometry;
-- program MixA source routing and downmix choice;
+Do not hard-code these without real commissioning:
+- final Blackmagic HDMI negotiated format;
+- microphone A/B transport and channel mapping;
+- room-specific detector noise floor and speech references;
+- final A/B/SPLIT framing and crop choices;
 - A/V sync offsets;
-- production bitrate/frame rate;
-- simultaneous ISO A + ISO B + Program recording load;
-- YouTube/Twitch streaming profile.
+- final provider bitrates under the real network uplink;
+- external-disk sustained write performance;
+- simultaneous camera ISO + Program MP4 recording load;
+- provider-specific SRT behavior for the actual account endpoint.
 
-The next phase is documented in `HARDWARE-COMMISSIONING.md`.
+The intended production target is still:
 
-## Historical material
+```text
+CAM A ─┐
+CAM B ─┼─► PROGRAM ─► live stream
+       │
+       └─► CAM A + CAM B + PROGRAM → MP4 on external USB storage
+```
 
-Earlier design/implementation artifacts are preserved locally under `local-private/work-history/` and are intentionally excluded from Git. `HANDOFF.md` and `ARCHITECTURE.md` are the authoritative current documents.
+Do not call that workload production-ready until it has passed a real soak test.
+
+## Release discipline
+
+Before a release: run `./scripts/test.sh`, validate the target LinkPi live, scan the public tree for private data/secrets, keep the Git tree clean, push `main`, and verify CI/CodeQL. Environment-specific IPs, provider credentials and private hardware backups belong outside the public repository.
