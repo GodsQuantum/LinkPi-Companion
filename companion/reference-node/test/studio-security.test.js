@@ -111,3 +111,16 @@ test('native SRT changes follow modern LinkPi stream.php updateDefaultConf reloa
   assert.match(block, /studio_native_func\('\/conf\/updateDefaultConf',\$config\)/);
   assert.doesNotMatch(block, /enc\.update/);
 });
+
+test('stopping native SRT and network inputs scrubs temporary destinations', () => {
+  const srtStart = studioPhp.indexOf('function studio_set_native_srt');
+  const srtEnd = studioPhp.indexOf('function studio_stream_state', srtStart);
+  const srtBlock = studioPhp.slice(srtStart, srtEnd);
+  assert.match(srtBlock, /\['ip'\]='127\.0\.0\.1'/);
+  assert.match(srtBlock, /\['passwd'\]=''/);
+  const netStart = studioPhp.indexOf('function studio_disable_network_source');
+  const netEnd = studioPhp.indexOf('function studio_state', netStart);
+  const netBlock = studioPhp.slice(netStart, netEnd);
+  assert.match(netBlock, /\['name'\]='Net'\.\$slot/);
+  assert.match(netBlock, /\['path'\]=''/);
+});
