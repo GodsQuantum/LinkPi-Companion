@@ -18,7 +18,7 @@ function studio_fps_values(): array { return [60,50,30,25,24]; }
 function studio_defaults(): array {
     return [
         'source'=>'AUTO',
-        'record'=>['resolution'=>'-1x-1','fps'=>30,'codec'=>'h265','bitrate'=>16000,'rcmode'=>'vbr'],
+        'record'=>['resolution'=>'1920x1080','fps'=>30,'codec'=>'h265','bitrate'=>12000,'rcmode'=>'vbr'],
         'live'=>['resolution'=>'1920x1080','fps'=>30,'codec'=>'auto','bitrate'=>5000,'autoBitrate'=>true,'rcmode'=>'cbr'],
         'recordSources'=>['ALL'],'programAudio'=>[0,1],'recordFragmentSeconds'=>1800,
     ];
@@ -304,7 +304,8 @@ function studio_auto_bitrate(array $q,array $selected,array $providers,string $c
     $br=($codec==='h265'?$h265:$h264)[$res]??5000;
     if (in_array('youtube',$selected,true)) {
         if ($codec==='h265' && $res==='3840x2160') $br=20000;
-        elseif ($res==='1920x1080') $br=max($br,$high?10000:8000);
+        elseif ($codec==='h264' && $res==='1920x1080') $br=max($br,$high?12000:10000);
+        elseif ($codec==='h265' && $res==='1920x1080') $br=max($br,$high?7500:5500);
     }
     if (in_array('twitch',$selected,true)) {
         if ($res==='3840x2160') throw new RuntimeException('Direct Twitch from LinkPi: choose 1080p or lower');

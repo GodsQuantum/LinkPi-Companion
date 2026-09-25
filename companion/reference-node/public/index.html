@@ -192,10 +192,10 @@
           <article class="card">
             <div class="section-head"><div><p class="label">3 · MASTER</p><h2>Qualité d’enregistrement</h2></div></div>
             <div class="field-grid">
-              <label><span>Résolution master</span><select id="studioRecordResolution"><option value="-1x-1" selected>Auto / source</option><option value="3840x2160">4K UHD</option><option value="1920x1080">1080p</option><option value="1280x720">720p</option><option value="640x360">360p</option><option value="1080x1920">1080×1920 portrait</option><option value="720x1280">720×1280 portrait</option><option value="360x640">360×640 portrait</option></select></label>
+              <label><span>Résolution master</span><select id="studioRecordResolution"><option value="-1x-1" selected>Auto / source</option><option value="3840x2160">4K UHD</option><option value="1920x1080" selected>1080p</option><option value="1280x720">720p</option><option value="640x360">360p</option><option value="1080x1920">1080×1920 portrait</option><option value="720x1280">720×1280 portrait</option><option value="360x640">360×640 portrait</option></select></label>
               <label><span>FPS master</span><select id="studioRecordFps"><option value="60">60</option><option value="50">50</option><option value="30" selected>30</option><option value="25">25</option><option value="24">24</option></select></label>
               <label><span>Codec master</span><select id="studioRecordCodec"><option value="h265" selected>H.265 / HEVC</option><option value="h264">H.264 / AVC</option></select></label>
-              <label><span>Débit master</span><div class="input-with-unit"><input id="studioRecordBitrate" type="number" min="300" max="20000" value="16000"><span>kb/s</span></div></label>
+              <label><span>Débit master</span><div class="input-with-unit"><input id="studioRecordBitrate" type="number" min="300" max="20000" value="12000"><span>kb/s</span></div></label>
             </div>
             <p class="muted">Le MAIN sert au master MP4. Auto/source évite l’upscale inutile ; choisis 4K seulement si la source et le firmware le tiennent réellement. Le SUB reste réservé au live.</p>
           </article>
