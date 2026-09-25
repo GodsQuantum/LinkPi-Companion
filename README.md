@@ -101,7 +101,7 @@ The **Guide** remains a safe assistant. The new **Studio** view can also apply e
 - **Auto Director pairing** — choose any two HDMI/USB/Net inputs as A/B, prepare the native scenes and calibrate silence/speech from Studio.
 - **Auto Director** — OFF / DRY-RUN / AUTO remains safety-gated.
 
-Provider strategy is destination-aware: YouTube direct can use RTMPS + HEVC/H.265; Twitch direct uses H.264 for the ordinary hardware RTMP path; Restream prefers SRT + HEVC when the account provides SRT ingest; Remote OBS uses SRT + H.265 by default with H.264 fallback.
+Provider strategy is destination-aware: YouTube direct can use RTMPS + HEVC/H.265; Twitch direct uses H.264 for the ordinary hardware RTMP path; Restream prefers SRT + HEVC when the account provides SRT ingest (SRT caller compatibility must still be validated against the actual Restream endpoint on this ENC1 V3 firmware); Remote OBS uses SRT + H.265 by default with H.264 fallback; Direct mode runs the LinkPi as the validated SRT listener and gives the remote OBS a caller URL.
 
 Provider credentials may be stored locally on the LinkPi in Companion's private `providers.json` (mode `0600`). GET APIs expose only configured/not-configured flags, never stream keys, SRT passphrases or private publish/read URLs.
 
