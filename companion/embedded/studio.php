@@ -645,57 +645,83 @@ function studio_native_func(string $url,array $data): array {
         throw new RuntimeException('Native LinkPi config update failed');
     return $decoded;
 }
-function studio_srt_receiver_url(int $port,int $latency,string $passphrase='',string $streamid='',string $mode='listener'): string {
-    $q=['mode'=>$mode,'latency'=>$latency];
-    if ($passphrase!=='') $q['passphrase']=$passphrase;
-    if ($streamid!=='') $q['streamid']=$streamid;
-    return 'srt://127.0.0.1:'.$port.'?'.studio_srt_query($q);
+function studio_process_running(string $needle): bool {
+    foreach (glob('/proc/[0-9]*/cmdline') ?: [] as $path) {
+        $raw=@file_get_contents($path);
+        if (is_string($raw) && str_contains($raw,$needle)) return true;
+    }
+    return false;
+}
+function studio_sls_state(): array {
+    $service=companion_native_json('config/service.json',[]);
+    return [
+        'enabled'=>($service['sls']??false)===true,
+        'running'=>studio_process_running('/link/bin/sls'),
+        'port'=>8080,
+    ];
+}
+function studio_enable_sls(): array {
+    $service=companion_native_json('config/service.json',[]);
+    if (!$service) throw new RuntimeException('Service config unavailable');
+    $changed=($service['sls']??false)!==true;
+    if ($changed) {
+        $service['sls']=true;
+        studio_native_func('/conf/updateServiceConf',$service);
+    }
+    $state=studio_sls_state();
+    $state['rebootRequired']=$state['enabled'] && !$state['running'];
+    $state['changed']=$changed;
+    return $state;
+}
+function studio_guest_stream_name(int $slot): string { return 'companion-net'.$slot; }
+function studio_sls_pull_url(int $slot): string {
+    return 'srt://127.0.0.1:8080?streamid=pull/live/'.studio_guest_stream_name($slot);
+}
+function studio_sls_publish_url(int $slot,string $host): string {
+    $target=trim($host)!==''?trim($host):'<LINKPI_PUBLIC_HOST>';
+    return 'srt://'.$target.':8080?streamid=push/live/'.studio_guest_stream_name($slot);
 }
 function studio_set_network_source(array $body): array {
-    $slot=(int)($body['slot']??1); if ($slot<1 || $slot>4) throw new InvalidArgumentException('Network slot must be 1-4');
-    $id=$slot+1; $url=trim((string)($body['url']??''));
-    if ($url==='' || !preg_match('#^(rtsp|rtmp|rtmps|srt|udp|rist|https?)://#i',$url)) throw new InvalidArgumentException('Unsupported network source URL');
-    $config=studio_native_config(); $found=false; $publisherUrl=null;
-    $scheme=strtolower((string)(parse_url($url,PHP_URL_SCHEME)??''));
+    $slot=(int)($body['slot']??1);
+    if ($slot<1 || $slot>4) throw new InvalidArgumentException('Network slot must be 1-4');
+    $id=$slot+1;
+    $inputMode=strtolower((string)($body['inputMode']??'pull'));
+    if (!in_array($inputMode,['pull','receive-srt'],true))
+        throw new InvalidArgumentException('Unknown network input mode');
 
-    if ($scheme==='srt') {
-        $parts=parse_url($url); $port=(int)($parts['port']??0);
-        if ($port<1 || $port>65535) throw new InvalidArgumentException('SRT receiver port missing');
-        $q=[]; parse_str((string)($parts['query']??''),$q);
-        $lat=(int)($q['latency']??120); if ($lat>8000) $lat=(int)round($lat/1000); $lat=max(20,min(8000,$lat));
-        $pass=(string)($q['passphrase']??''); $streamid=(string)($q['streamid']??'');
-        if ($pass!=='' && (strlen($pass)<10 || strlen($pass)>79)) throw new InvalidArgumentException('SRT passphrase must be 10-79 characters');
-
-        $receiver=companion_native_json('config/misc/receiver.json',['rtmp'=>[],'srt'=>[],'ndi'=>[]]);
-        if (!isset($receiver['srt']) || !is_array($receiver['srt'])) $receiver['srt']=[];
-        $item=[
-            'desc'=>'Companion Net'.$slot,'bind'=>$id,'port'=>(string)$port,'latency'=>(string)$lat,
-            'passphrase'=>$pass,'streamid'=>$streamid,
-            'url'=>studio_srt_receiver_url($port,$lat,$pass,$streamid,'caller'),
-        ];
-        $replaced=false;
-        foreach ($receiver['srt'] as $i=>$old) if ((int)($old['bind']??-1)===$id || ($old['desc']??'')==='Companion Net'.$slot) {
-            $receiver['srt'][$i]=$item; $replaced=true; break;
-        }
-        if (!$replaced) $receiver['srt'][]=$item;
-        studio_native_func('/conf/updateReceiverConf',$receiver);
-        $url=studio_srt_receiver_url($port,$lat,$pass,$streamid,'listener');
-        $host=trim((string)($body['publishHost']??''));
-        $publisherUrl='srt://'.($host!==''?$host:'<LINKPI_HOST>').':'.$port.'?'.studio_srt_query(array_filter([
-            'mode'=>'caller','latency'=>$lat*1000,'passphrase'=>$pass,'streamid'=>$streamid
-        ],fn($v)=>$v!==''));
+    $publisherUrl=null; $rebootRequired=false;
+    if ($inputMode==='receive-srt') {
+        $sls=studio_enable_sls();
+        $rebootRequired=($sls['rebootRequired']??false)===true;
+        $url=studio_sls_pull_url($slot);
+        $publisherUrl=studio_sls_publish_url($slot,(string)($body['publishHost']??''));
+    } else {
+        $url=trim((string)($body['url']??''));
+        if ($url==='' || !preg_match('#^(rtsp|rtmp|rtmps|srt|udp|rist|https?)://#i',$url))
+            throw new InvalidArgumentException('Unsupported network source URL');
     }
 
+    $config=studio_native_config(); $found=false;
     foreach ($config as &$ch) if (($ch['id']??-1)===$id && ($ch['type']??'')==='net') {
-        $found=true; $ch['name']=trim((string)($body['name']??('Net'.$slot)))?:('Net'.$slot); $ch['enable']=true;
-        $ch['net']['path']=$url; $ch['net']['decodeV']=($body['video']??true)===true; $ch['net']['decodeA']=($body['audio']??true)===true;
-        $ch['net']['bufferMode']=(int)($body['bufferMode']??1); $ch['net']['minDelay']=max(0,min(5000,(int)($body['minDelay']??300)));
+        $found=true;
+        $ch['name']=trim((string)($body['name']??('Net'.$slot)))?:('Net'.$slot);
+        $ch['enable']=true;
+        $ch['net']['path']=$url;
+        $ch['net']['decodeV']=($body['video']??true)===true;
+        $ch['net']['decodeA']=($body['audio']??true)===true;
+        $ch['net']['bufferMode']=(int)($body['bufferMode']??1);
+        $ch['net']['minDelay']=max(0,min(5000,(int)($body['minDelay']??300)));
         $ch['net']['protocol']=strtolower((string)($body['transport']??'tcp'))==='udp'?'udp':'tcp';
     }
     unset($ch);
     if (!$found) throw new RuntimeException('Network decoder slot unavailable');
     linkpi_rpc_call('enc.update',[json_encode($config,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT)]);
-    return ['slot'=>$slot,'channelId'=>$id,'configured'=>true,'publisherUrl'=>$publisherUrl];
+    return [
+        'slot'=>$slot,'channelId'=>$id,'configured'=>true,'inputMode'=>$inputMode,
+        'publisherUrl'=>$publisherUrl,'rebootRequired'=>$rebootRequired,
+        'sls'=>$inputMode==='receive-srt'?studio_sls_state():null,
+        'guestCodecHint'=>$inputMode==='receive-srt'?'h264+aac':null,
+    ];
 }
 function studio_disable_network_source(int $slot): array {
     if ($slot<1 || $slot>4) throw new InvalidArgumentException('Network slot must be 1-4');
@@ -706,11 +732,6 @@ function studio_disable_network_source(int $slot): array {
     }
     unset($ch);
     linkpi_rpc_call('enc.update',[json_encode($config,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT)]);
-    $receiver=companion_native_json('config/misc/receiver.json',[]);
-    if (isset($receiver['srt']) && is_array($receiver['srt'])) {
-        $receiver['srt']=array_values(array_filter($receiver['srt'],fn($x)=>(int)($x['bind']??-1)!==$id && ($x['desc']??'')!=='Companion Net'.$slot));
-        try { studio_native_func('/conf/updateReceiverConf',$receiver); } catch (Throwable $e) {}
-    }
     return ['slot'=>$slot,'channelId'=>$id,'enabled'=>false];
 }
 function studio_state(): array {
@@ -727,7 +748,8 @@ function studio_state(): array {
     $ad=function_exists('current_state')?current_state():[];
     return ['config'=>studio_load_config(),'providers'=>studio_public_providers(),'resolutions'=>studio_resolutions(),
         'fps'=>studio_fps_values(),'layouts'=>studio_layouts(),'inputs'=>companion_sanitize(studio_inputs()),'channels'=>$channels,
-        'storage'=>studio_storage_state(),'stream'=>studio_stream_state(),'recording'=>companion_sanitize($rec),
+        'storage'=>studio_storage_state(),'sls'=>studio_sls_state(),
+        'stream'=>studio_stream_state(),'recording'=>companion_sanitize($rec),
         'autodirector'=>['mode'=>$ad['mode']??'OFF','readiness'=>$ad['readiness']??['autoReady'=>false]]];
 }
 

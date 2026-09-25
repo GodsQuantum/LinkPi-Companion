@@ -239,16 +239,19 @@
 
           <article class="card">
             <div class="section-head"><div><p class="label">INVITÉ INTERNET</p><h2>Ajouter une source distante</h2></div><span class="mini-badge">Net1–Net4</span></div>
-            <p class="muted">Le LinkPi décode RTSP / RTMP / SRT / UDP. Un lien VDO.Ninja WebRTC n’est pas directement décodable : utilise un bridge WHIP/WebRTC → SRT/RTSP, puis colle son URL ici.</p>
-            <p class="muted">Pour SRT entrant, indique une URL caller vers ce LinkPi (par ex. <code>srt://IP_LINKPI:7001?mode=caller&amp;latency=120000</code>) : Companion configure automatiquement le receiver/listener natif et te renvoie l’URL à donner à l’émetteur.</p>
+            <p class="muted">Le LinkPi peut tirer une URL RTSP/RTMP/SRT/UDP, ou recevoir directement un invité SRT grâce à son serveur SLS natif. Un lien VDO.Ninja WebRTC doit d’abord être bridgé vers SRT/RTSP.</p>
             <div class="field-grid">
               <label><span>Slot</span><select id="studioGuestSlot"><option value="1">Net1</option><option value="2">Net2</option><option value="3">Net3</option><option value="4">Net4</option></select></label>
+              <label><span>Mode</span><select id="studioGuestMode"><option value="receive-srt" selected>Recevoir SRT sur ce LinkPi</option><option value="pull">Tirer une URL réseau</option></select></label>
               <label><span>Nom</span><input id="studioGuestName" value="Invité"></label>
-              <label class="wide-field"><span>URL réseau</span><input id="studioGuestUrl" placeholder="srt://… ou rtsp://…"></label>
+              <label id="studioGuestHostField"><span>IP / DNS public du LinkPi</span><input id="studioGuestHost" placeholder="mon-linkpi.example.net"></label>
+              <label id="studioGuestUrlField" class="wide-field" hidden><span>URL réseau à tirer</span><input id="studioGuestUrl" placeholder="rtsp://… · rtmp://… · srt://…"></label>
               <label><span>Buffer</span><select id="studioGuestBuffer"><option value="1" selected>Temps réel</option><option value="0">Normal</option><option value="2">Buffer</option><option value="3">Sync</option></select></label>
               <label><span>Audio</span><select id="studioGuestAudio"><option value="yes" selected>Avec audio</option><option value="no">Sans audio</option></select></label>
             </div>
+            <div class="callout"><strong>SRT entrant</strong><span>Le serveur SLS natif écoute sur UDP 8080. Pour cette entrée, utilise H.264 + AAC ; le SLS embarqué n’est pas le bon chemin pour HEVC chiffré.</span></div>
             <div class="action-row"><button id="studioGuestApply" class="secondary-btn">Ajouter / mettre à jour</button><button id="studioGuestDisable" class="text-btn">Désactiver ce slot</button></div>
+            <div class="generated-box"><code id="studioGuestOutput">Le lien à donner à l’invité apparaîtra ici.</code><button id="studioGuestCopy" class="copy-btn" disabled>Copier</button></div>
             <p id="studioGuestStatus" class="muted"></p>
           </article>
         </section>

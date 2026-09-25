@@ -95,7 +95,7 @@ Le **Guide** reste un assistant sûr. Le nouvel onglet **Studio** peut en plus a
 - **Master vs live** — le MAIN peut rester un master H.265 de haute qualité tandis que le SUB sert au live avec un débit plus bas.
 - **Providers** — YouTube, Twitch, Restream et Remote OBS.
 - **Transport** — Stream/Stop et Record/Stop directement depuis Companion.
-- **Invité Internet** — configuration de Net1–Net4 en RTSP/RTMP/SRT/UDP.
+- **Invité Internet** — soit tirer RTSP/RTMP/SRT/UDP dans Net1–Net4, soit laisser Studio générer une URL SRT entrante via le serveur SLS natif du LinkPi sur UDP 8080.
 - **Master Auto / source max** — sur une caméra UVC, Studio choisit le plus grand mode réellement annoncé au FPS choisi ; en HDMI, il suit le signal d’entrée.
 - **Pairing Auto Director** — choisis deux entrées HDMI/USB/Net comme A/B, prépare les scènes natives et calibre silence/parole depuis Studio.
 - **Auto Director** — OFF / DRY-RUN / AUTO reste protégé par les verrous de readiness.
@@ -104,7 +104,7 @@ La stratégie est adaptée à la destination : YouTube direct peut utiliser RTMP
 
 Les credentials peuvent être conservés localement sur le LinkPi dans `providers.json` privé (`0600`). Les API GET ne renvoient que configuré/non configuré, jamais les stream keys, passphrases SRT ou URLs privées publish/read.
 
-Un lien VDO.Ninja est WebRTC et n’est pas directement décodable par ce firmware LinkPi. Utilise un bridge WebRTC/WHIP tel que MediaMTX, expose l’invité en SRT ou RTSP, puis ajoute cette URL dans Net1–Net4.
+Un lien VDO.Ninja est WebRTC et n’est pas directement décodable par ce firmware LinkPi. Utilise un bridge WebRTC/WHIP tel que MediaMTX et publie H.264 + AAC vers l’URL SRT entrante générée par Studio, ou expose l’invité en RTSP/SRT et utilise le mode pull. Le SLS embarqué vise le MPEG-TS H.264 ; pour un invité HEVC/chiffré, préfère un relay externe.
 
 ## Objectif enregistrement
 
