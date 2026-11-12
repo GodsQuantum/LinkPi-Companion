@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
-TARGET="${1:-192.0.2.42}"
+TARGET="${1:-${LINKPI_HOST:-}}"
+if [[ -z "$TARGET" && -n "${LINKPI_URL:-}" ]]; then
+  TARGET="${LINKPI_URL#*://}"
+  TARGET="${TARGET%%/*}"
+  TARGET="${TARGET%%:*}"
+fi
+if [[ -z "$TARGET" ]]; then
+  echo "Specify device host as argument or LINKPI_HOST / LINKPI_URL" >&2
+  exit 2
+fi
 URL="http://$TARGET:8787/api/state"
 STATE="$(curl -fsS --connect-timeout 3 --max-time 6 "$URL")"
 python3 - "$STATE" <<'PY'

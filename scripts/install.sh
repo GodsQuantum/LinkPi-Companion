@@ -10,8 +10,12 @@ if [[ -z "$TARGET" ]]; then
     _host="${_host%%/*}"
     TARGET="${_host%%:*}"
   else
-    TARGET="192.0.2.42"
+    TARGET="${LINKPI_HOST:-}"
   fi
+fi
+if [[ -z "$TARGET" ]]; then
+  echo "Specify device host as argument or LINKPI_HOST / LINKPI_URL" >&2
+  exit 2
 fi
 BASE_URL="${LINKPI_URL:-http://$TARGET}"
 UI_PORT="8787"
